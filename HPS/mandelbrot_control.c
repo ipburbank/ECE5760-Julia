@@ -259,11 +259,18 @@ int main(int argc, char *argv[]) {
   mouse_state.y = 0;
   VGA_text_clear();
 
-    double step = reg27ToFloat(*h2p_step_addr);
+  // set an initial position
+  *h2p_x_0_addr  = floatToReg27(-2.0);
+  *h2p_y_0_addr  = floatToReg27(-1.1);
+  *h2p_step_addr = floatToReg27(3.0/640.0);
 
-    double x_position = reg27ToFloat(*h2p_x_0_addr);
-    double y_position = reg27ToFloat(*h2p_y_0_addr);
+  // load position once to avoid rounding errors
+  double step = reg27ToFloat(*h2p_step_addr);
+  
+  double x_position = reg27ToFloat(*h2p_x_0_addr);
+  double y_position = reg27ToFloat(*h2p_y_0_addr);
 
+  usleep(10000);
   while(1) {
     mouse_update();
 
@@ -280,7 +287,7 @@ int main(int argc, char *argv[]) {
       center_x = x_position + 320.0*step;
       center_y = y_position + 240.0*step;
 
-      step *= 1.00003;
+      step *= 1.003;
 
       *h2p_x_0_addr = floatToReg27(center_x - 320.0*step);
       *h2p_y_0_addr = floatToReg27(center_y - 240.0*step);
@@ -293,7 +300,7 @@ int main(int argc, char *argv[]) {
       center_x = x_position + 320.0*step;
       center_y = y_position + 240.0*step;
 
-      step /= 1.00003;
+      step /= 1.003;
 
       *h2p_x_0_addr = floatToReg27(center_x - 320.0*step);
       *h2p_y_0_addr = floatToReg27(center_y - 240.0*step);
@@ -310,7 +317,10 @@ int main(int argc, char *argv[]) {
     sprintf(text_top_row, "Time: %ims\0", *h2p_frame_ms_addr);
     sprintf(text_bottom_row, "(%.5f, %.5f),(%.5f, %.5f)", x_position, y_position, x_position+640*step, y_position+480*step);
 
+    usleep(10000);
+
     // draws the text
+    VGA_text_clear();
     VGA_text(1, 1, text_top_row);
     VGA_text(1, 2, text_bottom_row);
   }
