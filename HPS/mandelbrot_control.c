@@ -27,6 +27,7 @@
 #include <stdint.h>
 #include <ctype.h>
 #include <getopt.h>
+#include <math.h>
 
 //@}
 
@@ -82,9 +83,11 @@ void *vga_char_virtual_base;
 volatile unsigned int *h2p_lw_sw_addr=NULL;
 
 // access to pios
-volatile unsigned int *h2p_k1_addr=NULL;
-volatile unsigned int *h2p_k2_addr=NULL;
-volatile unsigned int *h2p_k3_addr=NULL;
+volatile unsigned int *h2p_x_0_addr=NULL;
+volatile unsigned int *h2p_step_addr=NULL;
+volatile unsigned int *h2p_y_0_addr=NULL;
+volatile unsigned int *h2p_num_iter_addr=NULL;
+volatile unsigned int *h2p_frame_ms_addr=NULL;
 
 // /dev/mem file id
 int mem_fd;
@@ -127,7 +130,7 @@ void VGA_box(int, int, int, int, short);
 /**
  * @brief Update the global `mouse_state` and redraw the mouse
  */
-void mouse_update_and_redraw();
+void mouse_update();
 
 /**
  * @brief floating point stuff
@@ -252,11 +255,64 @@ int main(int argc, char *argv[]) {
 
   // =============================================
 
-  while(1) {
-    float x_position = reg27ToFloat(*h2p_x_0_addr);
-    x_position += mouse.x;
+  mouse_state.x = 0;
+  mouse_state.y = 0;
+  VGA_text_clear();
 
+    double step = reg27ToFloat(*h2p_step_addr);
+
+    double x_position = reg27ToFloat(*h2p_x_0_addr);
+    double y_position = reg27ToFloat(*h2p_y_0_addr);
+
+  while(1) {
+    mouse_update();
+
+    x_position += (double) mouse_state.x * 10.0 * step;
+    mouse_state.x = 0;
     *h2p_x_0_addr = floatToReg27(x_position);
+
+    y_position += (double) mouse_state.y * 10.0 * step;
+    mouse_state.y = 0;
+    *h2p_y_0_addr = floatToReg27(y_position);
+
+    if(mouse_state.left){
+      double center_x, center_y;
+      center_x = x_position + 320.0*step;
+      center_y = y_position + 240.0*step;
+
+      step *= 1.00003;
+
+      *h2p_x_0_addr = floatToReg27(center_x - 320.0*step);
+      *h2p_y_0_addr = floatToReg27(center_y - 240.0*step);
+
+      *h2p_step_addr = floatToReg27(step);
+    }
+
+    if(mouse_state.right){
+      double center_x, center_y;
+      center_x = x_position + 320.0*step;
+      center_y = y_position + 240.0*step;
+
+      step /= 1.00003;
+
+      *h2p_x_0_addr = floatToReg27(center_x - 320.0*step);
+      *h2p_y_0_addr = floatToReg27(center_y - 240.0*step);
+
+      *h2p_step_addr = floatToReg27(step);
+    }
+  
+    /* create a message to be displayed on the VGA
+       and LCD displays */
+    char text_top_row[40];
+    char text_bottom_row[40] = "Cornell ece5760\0";
+
+    // write the text to the buffers
+    sprintf(text_top_row, "Time: %ims\0", *h2p_frame_ms_addr);
+    sprintf(text_bottom_row, "(%.5f, %.5f),(%.5f, %.5f)", x_position, y_position, x_position+640*step, y_position+480*step);
+
+    // draws the text
+    VGA_text(1, 1, text_top_row);
+    VGA_text(1, 2, text_bottom_row);
   }
 
   return 0;
@@ -344,7 +400,7 @@ void VGA_box(int x1, int y1, int x2, int y2, short pixel_color) {
     }
 }
 
-void mouse_update_and_redraw() {
+void mouse_update() {
   int8_t data[3];
 
   // update the mouse state variable
@@ -355,13 +411,9 @@ void mouse_update_and_redraw() {
     mouse_state.middle = !!(data[0] & 0x4);
     mouse_state.right  = !!(data[0] & 0x2);
 
-    mouse_state.x += data[1];
-    if(mouse_state.x < 5)   mouse_state.x = 5;
-    if(mouse_state.x > 635) mouse_state.x = 635;
+    mouse_state.x = data[1];
 
-    mouse_state.y -= data[2]; // mouse up positive, display up negative
-    if(mouse_state.y < 5)   mouse_state.y = 5;
-    if(mouse_state.y > 475) mouse_state.y = 475;
+    mouse_state.y = -1 * data[2]; // mouse up positive, display up negative
   }
 }
 
