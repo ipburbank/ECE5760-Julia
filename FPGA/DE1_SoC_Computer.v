@@ -276,7 +276,7 @@ module DE1_SoC_Computer (
    ////////////////////////////////////
    // HPS Pins
    ////////////////////////////////////
-   
+
    // DDR3 SDRAM
    output [14: 0]                                  HPS_DDR3_ADDR;
    output [ 2: 0]                                  HPS_DDR3_BA;
@@ -360,7 +360,7 @@ module DE1_SoC_Computer (
    wire [15: 0]                                    hex3_hex0;
    //wire                  [15: 0] hex5_hex4;
 
-   //assign HEX0 = ~hex3_hex0[ 6: 0]; // hex3_hex0[ 6: 0]; 
+   //assign HEX0 = ~hex3_hex0[ 6: 0]; // hex3_hex0[ 6: 0];
    //assign HEX1 = ~hex3_hex0[14: 8];
    //assign HEX2 = ~hex3_hex0[22:16];
    //assign HEX3 = ~hex3_hex0[30:24];
@@ -412,7 +412,7 @@ module DE1_SoC_Computer (
    // pixel state clock
    always @(posedge CLOCK2_50) begin
       // reset and choose
-      // color and x-position of 
+      // color and x-position of
       // 100 pixel vertical line
       if (~KEY[0]) begin
          mem_state <= 0 ;
@@ -421,9 +421,9 @@ module DE1_SoC_Computer (
          image_data <= KEY[2:1];
          count <= 0 ;
       end
-      
-      // state machine to draw the vertical 
-      // line for 100 pixels. 
+
+      // state machine to draw the vertical
+      // line for 100 pixels.
       // address = x + (y<<10)
       if (mem_state == 0) begin
          mem_state <= 1;
@@ -470,7 +470,7 @@ module DE1_SoC_Computer (
    // from the pixel state machine
    assign mem_addr = x_cood + (y_cood<<10) ;
 
-   // use byte-wide bus-master      
+   // use byte-wide bus-master
    assign bus_byte_enable = 4'b0001;
 
    // bus-master state machine
@@ -489,7 +489,7 @@ module DE1_SoC_Computer (
       else begin
          timer <= timer + 1;
       end
-      
+
       // add time to Vsync
       last_vs <= VGA_VS ;
       if (VGA_VS && ~last_vs) begin
@@ -514,12 +514,12 @@ module DE1_SoC_Computer (
       else begin
          wait_one_hs <= 0 ;
       end
-      
+
       // write to the bus-master
       // but wait for when VGA is not reading
       if (state==0 && (~VGA_VS | ~VGA_HS | wait_one | wait_one_hs)) begin // && timer==0 // && (~VGA_VS | ~VGA_HS) // && ~VGA_BLANK_N
-         state <= 2;     
-         
+         state <= 2;
+
          // write all the pixels
          x_cood <= x_cood + 10'd1 ;
          if (x_cood > 10'd639) begin
@@ -529,7 +529,7 @@ module DE1_SoC_Computer (
                y_cood <= 0 ;
             end
          end
-         
+
          // set up the write data = white_red_green_blue
          // white = ff; red = e0; green = 1c; blue = 03;
          // AND signal the write request to the Avalon bus
@@ -544,18 +544,18 @@ module DE1_SoC_Computer (
             bus_write_data <= 8'h1c ;
          end
          else bus_write_data <= 8'h00 ;
-         
+
          // signal the bus that a write is requested
-         bus_write <= 1'b1 ;     
+         bus_write <= 1'b1 ;
       end
-      
+
       // detect bus-transaction-complete ACK
       // You MUST do this check
       if (state==2 && bus_ack==1) begin
          state <= 0 ;
          bus_write <= 0;
       end
-      
+
    end // always @(posedge state_clock --> CLOCK2_50)
    ////////////////////////////////////////////////////////////////////
 
@@ -572,11 +572,11 @@ module DE1_SoC_Computer (
                                // Global signals
                                .system_pll_ref_clk_clk                                 (CLOCK_50), //?
                                .system_pll_ref_reset_reset                     (1'b0),
-      
+
                                // AV Config
                                .av_config_SCLK                                                 (FPGA_I2C_SCLK),
                                .av_config_SDAT                                                 (FPGA_I2C_SDAT),
-                               
+
                                // bus master
                                .bus_master_video_external_interface_address     (bus_addr),     // .address
                                .bus_master_video_external_interface_byte_enable (bus_byte_enable), //  .byte_enable
@@ -597,7 +597,7 @@ module DE1_SoC_Computer (
                                .vga_R                                                                          (VGA_R),
                                .vga_G                                                                          (VGA_G),
                                .vga_B                                                                          (VGA_B),
-                               
+
                                // SDRAM
                                .sdram_clk_clk                                                          (DRAM_CLK),
                                .sdram_addr                                                                  (DRAM_ADDR),
@@ -609,7 +609,7 @@ module DE1_SoC_Computer (
                                .sdram_dqm                                                                      ({DRAM_UDQM,DRAM_LDQM}),
                                .sdram_ras_n                                                            (DRAM_RAS_N),
                                .sdram_we_n                                                                     (DRAM_WE_N),
-                               
+
                                ////////////////////////////////////
                                // HPS Side
                                ////////////////////////////////////
@@ -630,7 +630,7 @@ module DE1_SoC_Computer (
                                .memory_mem_odt         (HPS_DDR3_ODT),
                                .memory_mem_dm                  (HPS_DDR3_DM),
                                .memory_oct_rzqin               (HPS_DDR3_RZQ),
-                               
+
                                // Ethernet
                                .hps_io_hps_io_gpio_inst_GPIO35 (HPS_ENET_INT_N),
                                .hps_io_hps_io_emac1_inst_TX_CLK        (HPS_ENET_GTX_CLK),
@@ -734,32 +734,32 @@ module true_dual_port_ram_single_clock
    // Declare the RAM variable
    reg [DATA_WIDTH-1:0]           ram[2**ADDR_WIDTH-1:0];
 
-   // Port A 
+   // Port A
    always @ (posedge clk)
      begin
-        if (we_a) 
+        if (we_a)
           begin
              ram[addr_a] <= data_a;
              q_a <= data_a;
           end
-        else 
+        else
           begin
              q_a <= ram[addr_a];
-          end 
-     end 
+          end
+     end
 
-   // Port B 
+   // Port B
    always @ (posedge clk)
      begin
-        if (we_b) 
+        if (we_b)
           begin
              ram[addr_b] <= data_b;
              q_b <= data_b;
           end
-        else 
+        else
           begin
              q_b <= ram[addr_b];
-          end 
+          end
      end
 
 endmodule
