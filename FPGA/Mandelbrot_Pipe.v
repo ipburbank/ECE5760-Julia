@@ -13,7 +13,7 @@ module Mandelbrot_Pipe (
                         input  wire [26:0] C_A,
                         input  wire [26:0] C_B,
                         output wire        done,
-                        output wire [10:0] num_iterations
+                        output wire [9:0] num_iterations
                         );
 
    // Z_{n+1} = Z_{n}^2 + C
@@ -32,7 +32,7 @@ module Mandelbrot_Pipe (
    //  REG/WIRE declarations
    //=======================================================
 
-   reg [10:0]                       num_iterations_plus_one;
+   reg [9:0]                       num_iterations_plus_one;
    assign num_iterations = num_iterations_plus_one - 1;
 
    reg  [26:0]                             Z_A_reg, Z_B_reg, C_A_reg, C_B_reg;
