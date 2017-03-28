@@ -44,12 +44,12 @@ module testbench();
 
    wire [26:0] C_A, C_B, C_A_int, C_B_int;
    Int2Fp ConvertFP_C_A(-16'sd3, C_A_int);
-   Int2Fp ConvertFP_C_B(16'sd1, C_B_int);
-   FpShift SHA(C_A_int, -8'sd2, C_A);
+   Int2Fp ConvertFP_C_B(16'sd2, C_B_int);
+   FpShift SHA(C_A_int, -8'sd1, C_A);
    FpShift SHB(C_B_int, -8'sd1, C_B);
 
    wire        done;
-   wire [10:0] num_iterations;
+   wire [9:0] num_iterations;
 
    Mandelbrot_Pipe Pipe(
                         .clk            (clk_50),

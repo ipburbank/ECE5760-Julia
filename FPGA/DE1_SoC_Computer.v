@@ -376,68 +376,41 @@ module DE1_SoC_Computer (
    ////////////////////////////////////////////////////////////////////
    // Pixel generation state machine
    ////////////////////////////////////////////////////////////////////
-   // --- M10K memory block memory ---
-   // See below for module definition.
-   // Interface:
-   //module true_dual_port_ram_single_clock
-   //#(parameter DATA_WIDTH=2, parameter ADDR_WIDTH=19)
-   //(
-   //      input [(DATA_WIDTH-1):0] data_a, data_b,
-   //      input [(ADDR_WIDTH-1):0] addr_a, addr_b,
-   //      input we_a, we_b, clk,
-   //      output reg [(DATA_WIDTH-1):0] q_a, q_b
-   //);
-   reg [1:0]                                       image_data ;
-   wire [1:0]                                      mem_data ;
-   reg [18:0]                                      image_addr ;
-   wire [18:0]                                     mem_addr ;
-   reg                                             image_we ;
-   reg [3:0]                                       mem_state ;
-   reg [7:0]                                       count = 255 ;
-   // M10K memory instantiation
-   true_dual_port_ram_single_clock image_ram(
-                                             .data_a (image_data),
-                                             .data_b (2'b00),
-                                             .addr_a (image_addr),
-                                             .addr_b (mem_addr),
-                                             .we_a (image_we),
-                                             .we_b (1'b0),
-                                             .clk (CLOCK2_50),
-                                             .q_a (),
-                                             .q_b (mem_data)
-                                             );
+   wire [9:0] mem_datas [0:640];
 
-   // pixel state clock
-   always @(posedge CLOCK2_50) begin
-      // reset and choose
-      // color and x-position of
-      // 100 pixel vertical line
-      if (~KEY[0]) begin
-         mem_state <= 0 ;
-         image_we <= 0 ;
-         image_addr <= SW + (100<<10) ;
-         image_data <= KEY[2:1];
-         count <= 0 ;
-      end
+   genvar i;
+   generate
+      for(i=0; i < 20; i=i+1) begin : column_modules
+         wire       pipe_output_done;
+         wire [9:0] pipe_output_num_iterations;
 
-      // state machine to draw the vertical
-      // line for 100 pixels.
-      // address = x + (y<<10)
-      if (mem_state == 0) begin
-         mem_state <= 1;
-         if (count<100) begin
-            image_addr <= image_addr + (1<<10) ;
-            count <= count + 1 ;
-            image_we <= 1;
-         end
-      end
-      // end the write operation
-      if (mem_state ==1) begin
-         mem_state <= 0 ;
-         image_we <= 0;
-      end
+         wire [26:0] C_A, C_B, C_A_int, C_B_int;
+         Int2Fp ConvertFP_C_A(-16'sd3, C_A_int);
+         Int2Fp ConvertFP_C_B(16'sd1, C_B_int);
+         FpShift SHA(C_A_int, -8'sd2, C_A);
+         FpShift SHB(C_B_int, -8'sd1, C_B);
 
-   end //always @(posedge CLOCK2_50) begin
+         wire       full, empty, q;
+         Mandelbrot_Pipe Pipe(
+                              .clk            (CLOCK2_50),
+                              .reset          (~KEY[0]),
+                              .start          (CLOCK2_50),
+                              .C_A            (C_A),
+                              .C_B            (C_B),
+                              .done           (pipe_output_done),
+                              .num_iterations (pipe_output_num_iterations)
+                              );
+         Row_Output_FIFO Output_FIFO (
+                                      .clock (CLOCK2_50),
+                                      .data  (pipe_output_num_iterations),
+                                      .rdreq (CLOCK2_50),
+                                      .wrreq (pipe_output_done),
+                                      .empty (empty),
+                                      .full  (full),
+                                      .q     (mem_datas[i])
+                                      );
+      end
+   endgenerate
 
    ////////////////////////////////////////////////////////////////////
    // image write state machine -- bus-master to VGA display memory
@@ -532,13 +505,13 @@ module DE1_SoC_Computer (
          // white = ff; red = e0; green = 1c; blue = 03;
          // AND signal the write request to the Avalon bus
          // mem_data is from the pixel state machine
-         if (mem_data==2'b11) begin
+         if (mem_datas[x_cood] == 2'b11) begin
             bus_write_data <= 8'hff ;
          end
-         else if (mem_data==2'b10) begin
+         else if (mem_datas[x_cood] == 2'b10) begin
             bus_write_data <= 8'he0 ;
          end
-         else if (mem_data==2'b01) begin
+         else if (mem_datas[x_cood] == 2'b01) begin
             bus_write_data <= 8'h1c ;
          end
          else bus_write_data <= 8'h00 ;
@@ -713,52 +686,3 @@ module DE1_SoC_Computer (
                                .hps_io_hps_io_usb1_inst_NXT            (HPS_USB_NXT)
                                );
 endmodule
-
-/////////////////////////////////////////////////////////////////////////////
-     // Quartus II Verilog Template
-// True Dual Port RAM with single clock
-// -- FROM Edit > Insert Template > Verilog > Full Designs > RAMs and ROMs
-/////////////////////////////////////////////////////////////////////////////
-module true_dual_port_ram_single_clock
-  // two bits, 640x480 resolution
-  #(parameter DATA_WIDTH=2, parameter ADDR_WIDTH=19)
-   (
-    input [(DATA_WIDTH-1):0]      data_a, data_b,
-    input [(ADDR_WIDTH-1):0]      addr_a, addr_b,
-    input                         we_a, we_b, clk,
-    output reg [(DATA_WIDTH-1):0] q_a, q_b
-    );
-
-   // Declare the RAM variable
-   reg [DATA_WIDTH-1:0]           ram[2**ADDR_WIDTH-1:0];
-
-   // Port A
-   always @ (posedge clk)
-     begin
-        if (we_a)
-          begin
-             ram[addr_a] <= data_a;
-             q_a <= data_a;
-          end
-        else
-          begin
-             q_a <= ram[addr_a];
-          end
-     end
-
-   // Port B
-   always @ (posedge clk)
-     begin
-        if (we_b)
-          begin
-             ram[addr_b] <= data_b;
-             q_b <= data_b;
-          end
-        else
-          begin
-             q_b <= ram[addr_b];
-          end
-     end
-
-endmodule
-////////////////////////////////////////////////////
