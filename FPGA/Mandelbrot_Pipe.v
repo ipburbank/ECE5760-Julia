@@ -12,8 +12,8 @@ module Mandelbrot_Pipe (
                         input  wire        start,
                         input  wire [26:0] C_A,
                         input  wire [26:0] C_B,
-                        output wire        done,
-                        output wire [9:0] num_iterations
+                        output reg         done,
+                        output wire [9:0]  num_iterations
                         );
 
    // Z_{n+1} = Z_{n}^2 + C
@@ -32,59 +32,112 @@ module Mandelbrot_Pipe (
    //  REG/WIRE declarations
    //=======================================================
 
-   reg [9:0]                       num_iterations_plus_one;
-   assign num_iterations = num_iterations_plus_one - 1;
+   reg [9:0]                       num_iterations_internal;
+   assign num_iterations = num_iterations_internal - 1;
 
-   reg  [26:0]                             Z_A_reg, Z_B_reg, C_A_reg, C_B_reg;
-   wire [26:0]                             Z_A_squared, Z_B_squared;
-   wire [26:0]                             Z_A_squared_plus_c, Z_B_squared_plus_c;
+   wire                            magnitude_geq_four;
 
-   wire [26:0]                             magnitude, fp_four;
+   wire [26:0]                     addA, addB, addOut, mulA, mulB, mulOut;
+
+   reg [26:0]                      Z_A, Z_B,
+                                   Z_A_squared, Z_B_squared,
+                                   Z_AB,
+                                   Z_Asq_plus_Bsq, Z_Asq_minus_Bsq,
+                                   Z_A_squared_plus_c, Z_B_squared_plus_c;
+
+   wire [26:0]                     neg_Z_B_squared; // VALID ONLY IN CYCLE 2
+
+   wire [26:0]                     fp_four, fp_two, fp_zero;
    Int2Fp ConvertFP_Four(16'sd4, fp_four);
-   FpCompare CheckIfDone(magnitude, fp_four, done);
+   Int2Fp ConvertFP_Two(16'sd2, fp_two);
+   Int2Fp ConvertFP_Zero(16'sd0, fp_zero);
 
    //=======================================================
    //  State Machines
    //=======================================================
 
-   reg [3:0]                               state;
+   reg [2:0]                       state;
+   parameter cycle_reset=0, cycle_1=1, cycle_2=2, cycle_3=3, cycle_4=4;
    always @(posedge clk) begin
-      if(reset || done) begin
-         state                   <= 0;
-         Z_A_reg                 <= 0;
-         Z_B_reg                 <= 0;
-         C_B_reg                 <= 0;
-         C_A_reg                 <= 0;
-         num_iterations_plus_one <= 0;
-      end
-      else if(state == 0) begin // wait for start
-         if(start) begin
-            state   <= 1;
-            C_A_reg <= C_A;
-            C_B_reg <= C_B;
-         end
-      end
-      else if(state == 1) begin // Zsquared Cycle 1
-         state <= 2;
-         num_iterations_plus_one <= num_iterations_plus_one + 10'd1;
-      end
-      else if(state == 2) begin // Zsquared Cycle 2
-         state <= 3;
-      end
-      else if(state == 3) begin // Zsquared+C Cycle 1
-         state <= 4;
-      end
-      else if(state == 4) begin // Zsquared+C Cycle 2
-         state <= 5;
-      end
-      else if(state == 5) begin // Finalize
-         // we don't yet know if the magnitude is out of bounds,
-         // but we will discover that later
-         state   <= 1;
+      if(reset | done) begin
+         state            <= cycle_reset;
 
-         // save results
-         Z_A_reg <= Z_A_squared_plus_c;
-         Z_B_reg <= Z_B_squared_plus_c;
+         // TODO: init things
+         done <= 0;
+         Z_A <= fp_zero;
+         Z_B <= fp_zero;
+         Z_A_squared <= fp_zero;
+         Z_B_squared <= fp_zero;
+         Z_AB <= fp_zero;
+         Z_Asq_plus_Bsq <= fp_zero;
+         Z_Asq_minus_Bsq <= fp_zero;
+         Z_A_squared_plus_c <= fp_zero;
+         Z_B_squared_plus_c <= fp_zero;
+
+         num_iterations_internal <= 0;
+      end // if (reset)
+      else if (state == cycle_reset && start) begin
+         state <= cycle_2;
+      end
+      else begin
+         if (num_iterations_internal > 1000) done <= 1;
+
+         case (state)
+           //cycle_load:begin
+              // compute Z_A^2
+              // turns out its always zero, so reset handles it
+           //end
+           cycle_1:begin
+              state <= cycle_2;
+
+              num_iterations_internal <= num_iterations_internal + 1;
+
+              // compute Z_A^2
+              Z_A_squared <= mulOut;
+
+              // receive 2*Z_A*Z_B + C_B
+              Z_B <= addOut;
+           end
+           cycle_2:begin
+              state <= cycle_3;
+
+              // compute Z_B^2
+              Z_B_squared <= mulOut;
+
+              // reveive Z_A^2 + Z_B^2
+              Z_Asq_plus_Bsq <= addOut;
+
+              // start Z_A^2 + Z_B^2
+              // COMBINATIONAL
+           end
+           cycle_3:begin
+              state <= cycle_4;
+
+              // compute Z_A * Z_B
+              Z_AB <= mulOut;
+
+              // reveive Z_A^2 - Z_B^2
+              Z_Asq_minus_Bsq <= addOut;
+
+              // start Z_A^2 + Z_B^2 + C_B
+              // COMBINATIONAL
+           end
+           cycle_4:begin
+              state <= cycle_1;
+
+              // compute 2 * (Z_A * Z_B)
+              // don't store result, goes right in adder
+
+              // receive Z_A^2 - Z_B^2 + C_B
+              Z_A <= addOut;
+
+              // start 2 * (Z_AB) + C_B
+              // COMBINATIONAL
+
+              // check if done
+              if (magnitude_geq_four) done <= 1;
+           end
+         endcase
       end
    end
 
@@ -92,30 +145,47 @@ module Mandelbrot_Pipe (
    //  Structural coding
    //=======================================================
 
-   // compute Z^2
-   FP_Complex_Mul ZSq(.clk  (clk),
-                      .A1   (Z_A_reg),
-                      .B1   (Z_B_reg),
-                      .A2   (Z_A_reg),
-                      .B2   (Z_B_reg),
-                      .AOut (Z_A_squared),
-                      .BOut (Z_B_squared)
-                      );
+   assign addA = (state == cycle_1) ? Z_A_squared     :
+                 (state == cycle_2) ? Z_A_squared     :
+                 (state == cycle_3) ? addOut          : // Z_A_sq + Z_B_sq
+                 (state == cycle_4) ? mulOut          : // 2*Z_AB
+                                      27'bX           ; // don't care
 
-   // compute Z^2 + C
-   FP_Complex_Add ZSqPlusC(.clk  (clk),
-                           .A1   (Z_A_squared),
-                           .B1   (Z_B_squared),
-                           .A2   (C_A_reg),
-                           .B2   (C_B_reg),
-                           .AOut (Z_A_squared_plus_c),
-                           .BOut (Z_B_squared_plus_c)
-                           );
+   assign addB = (state == cycle_1) ? Z_B_squared     :
+                 (state == cycle_2) ? neg_Z_B_squared :
+                 (state == cycle_3) ? C_A             :
+                 (state == cycle_4) ? C_B             :
+                                      27'bX           ; // don't care
 
-   FP_Complex_Mag_Sq MagSq(.clk       (clk),
-                           .A         (Z_A_squared_plus_c),
-                           .B         (Z_B_squared_plus_c),
-                           .magnitude (magnitude)
-                           );
+   FpAdd FpAdder(clk, addA, addB, addOut);
 
+   //-------------------------------------------------------
+
+   assign mulA = (state == cycle_1) ? Z_A    :
+                 (state == cycle_2) ? Z_B    :
+                 (state == cycle_3) ? Z_A    :
+                 (state == cycle_4) ? fp_two :
+                                      27'bX  ; // don't care
+
+   assign mulB = (state == cycle_1) ? Z_A    :
+                 (state == cycle_2) ? Z_B    :
+                 (state == cycle_3) ? Z_B    :
+                 (state == cycle_4) ? Z_AB   :
+                                      27'bX  ; // don't care
+
+   FpMul FpMultiplier(mulA, mulB, mulOut);
+
+   //-------------------------------------------------------
+
+   FpNegate Z_B_squaredNegate(mulOut, neg_Z_B_squared);
+
+   //-------------------------------------------------------
+
+   FpCompare MagnitudeCheck(Z_Asq_plus_Bsq, fp_four, magnitude_geq_four);
+
+   wire [15:0] Z_A_squared_int, Z_B_squared_int, Z_Asq_plus_Bsq_int;
+
+   Fp2Int zasqtoint(Z_A_squared, Z_A_squared_int);
+   Fp2Int zbsqtoint(Z_B_squared, Z_B_squared_int);
+   Fp2Int zabsqtoint(Z_Asq_plus_Bsq, Z_Asq_plus_Bsq_int);
 endmodule

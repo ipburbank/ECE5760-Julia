@@ -443,7 +443,7 @@ module FpAdd (
    // if top bit of matissa is not set, then denorm
    assign underflow = ~uflow_shift[53];
 
-   always @(posedge iCLK) begin
+   always @(*) begin // TODO: IPB
       oSum <= (buf_A_e_zero && buf_B_e_zero)    ? 27'b0 :
               buf_A_e_zero                     ? buf_B :
               buf_B_e_zero                     ? buf_A :
