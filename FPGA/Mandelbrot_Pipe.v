@@ -10,7 +10,9 @@ module Mandelbrot_Pipe (
                         input  wire        clk,
                         input  wire        reset,
                         input  wire        start,
-                        input  wire [26:0] C_A,
+                        input  wire [26:0] C_A_reference,
+                        input  wire [26:0] C_A_step,
+                        input  wire [9:0]  C_A_column,
                         input  wire [26:0] C_B,
                         output reg         done,
                         output wire [9:0]  num_iterations
@@ -35,8 +37,12 @@ module Mandelbrot_Pipe (
    reg [9:0]                       num_iterations_internal;
    assign num_iterations = num_iterations_internal - 1;
 
+   wire [26:0]                     C_A_column_fp;
+   Int2Fp ConvertC_A_column({6'd0, C_A_column}, C_A_column_fp);
+
    wire                            magnitude_geq_four;
 
+   reg [26:0]                      C_A;
    wire [26:0]                     addA, addB, addOut, mulA, mulB, mulOut;
 
    reg [26:0]                      Z_A, Z_B,
@@ -58,12 +64,15 @@ module Mandelbrot_Pipe (
 
    reg [2:0]                       state;
    parameter cycle_reset=0, cycle_1=1, cycle_2=2, cycle_3=3, cycle_4=4;
+   reg                             just_did_init_flag; // in cycle 3 need to save C_A
+
    always @(posedge clk) begin
       if(reset | done) begin
          state            <= cycle_reset;
 
          // TODO: init things
          done <= 0;
+         C_A <= fp_zero;
          Z_A <= fp_zero;
          Z_B <= fp_zero;
          Z_A_squared <= fp_zero;
@@ -74,10 +83,15 @@ module Mandelbrot_Pipe (
          Z_A_squared_plus_c <= fp_zero;
          Z_B_squared_plus_c <= fp_zero;
 
+         just_did_init_flag <= 0;
+
          num_iterations_internal <= 0;
       end // if (reset)
       else if (state == cycle_reset && start) begin
-         state <= cycle_2;
+         state <= cycle_3;
+         just_did_init_flag <= 1;
+
+         // Mul step * idx, add mul + initial
       end
       else begin
          if (num_iterations_internal > 1000) done <= 1;
@@ -121,6 +135,12 @@ module Mandelbrot_Pipe (
 
               // start Z_A^2 + Z_B^2 + C_B
               // COMBINATIONAL
+
+              // if we just did init then save C_A
+              if (just_did_init_flag) begin
+                 C_A <= addOut;
+              end
+              just_did_init_flag <= 0;
            end
            cycle_4:begin
               state <= cycle_1;
@@ -145,15 +165,17 @@ module Mandelbrot_Pipe (
    //  Structural coding
    //=======================================================
 
-   assign addA = (state == cycle_1) ? Z_A_squared     :
+   assign addA = (state == cycle_reset) ? mulOut        : // step * idx
+                 (state == cycle_1) ? Z_A_squared     :
                  (state == cycle_2) ? Z_A_squared     :
-                 (state == cycle_3) ? addOut          : // Z_A_sq + Z_B_sq
+                 (state == cycle_3) ? addOut          : // Z_A_sq - Z_B_sq, except after INIT state when its C_A
                  (state == cycle_4) ? mulOut          : // 2*Z_AB
                                       27'bX           ; // don't care
 
-   assign addB = (state == cycle_1) ? Z_B_squared     :
-                 (state == cycle_2) ? neg_Z_B_squared :
-                 (state == cycle_3) ? C_A             :
+   assign addB = (state == cycle_reset) ? C_A_reference :
+                 (state == cycle_1) ? Z_B_squared     :
+                 (state == cycle_2) ? neg_Z_B_squared : // comb from mult
+                 (state == cycle_3) ? C_A             : // 0 after init state
                  (state == cycle_4) ? C_B             :
                                       27'bX           ; // don't care
 
@@ -161,13 +183,15 @@ module Mandelbrot_Pipe (
 
    //-------------------------------------------------------
 
-   assign mulA = (state == cycle_1) ? Z_A    :
+   assign mulA = (state == cycle_reset) ? C_A_step :
+                 (state == cycle_1) ? Z_A    :
                  (state == cycle_2) ? Z_B    :
                  (state == cycle_3) ? Z_A    :
                  (state == cycle_4) ? fp_two :
                                       27'bX  ; // don't care
 
-   assign mulB = (state == cycle_1) ? Z_A    :
+   assign mulB = (state == cycle_reset) ? C_A_column_fp :
+                 (state == cycle_1) ? Z_A    :
                  (state == cycle_2) ? Z_B    :
                  (state == cycle_3) ? Z_B    :
                  (state == cycle_4) ? Z_AB   :

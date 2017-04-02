@@ -42,11 +42,19 @@ module testbench();
    // Pipeline
    //=======================================================
 
-   wire [26:0] C_A, C_B, C_A_int, C_B_int;
-   Int2Fp ConvertFP_C_A(-16'sd3, C_A_int);
-   Int2Fp ConvertFP_C_B(16'sd1, C_B_int);
-   FpShift SHA(C_A_int, -8'sd2, C_A);
-   FpShift SHB(C_B_int, -8'sd1, C_B);
+   wire [26:0] C_A_reference, C_A_reference_num, C_A_step, C_A_step_num, C_B, C_B_int;
+   wire [9:0]  C_A_column;
+
+   Int2Fp ConvertFP_C_A_ref(-16'sd1, C_A_reference_num);
+   FpShift SHA(C_A_reference_num, -8'sd1, C_A_reference);
+
+   Int2Fp ConvertFP_C_A_step(16'sd1, C_A_step_num);
+   FpShift SHAstep(C_A_step_num, -8'sd2, C_A_step);
+
+   assign C_A_column = 0;
+
+   Int2Fp ConvertFP_C_B(16'sd3, C_B_int);
+   FpShift SHB(C_B_int, -8'sd2, C_B);
 
    wire        done;
    wire [9:0] num_iterations;
@@ -55,7 +63,9 @@ module testbench();
                         .clk            (clk_50),
                         .reset          (reset),
                         .start          (start),
-                        .C_A            (C_A),
+                        .C_A_reference  (C_A_reference),
+                        .C_A_step       (C_A_step),
+                        .C_A_column     (C_A_column),
                         .C_B            (C_B),
                         .done           (done),
                         .num_iterations (num_iterations)
