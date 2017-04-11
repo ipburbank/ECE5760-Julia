@@ -362,173 +362,143 @@ module DE1_SoC_Computer (
    //assign HEX1 = ~hex3_hex0[14: 8];
    //assign HEX2 = ~hex3_hex0[22:16];
    //assign HEX3 = ~hex3_hex0[30:24];
-   assign HEX4 = 7'b1111111;
-   assign HEX5 = 7'b1111111;
+   //assign HEX4 = 7'b1111111;
+   //assign HEX5 = 7'b1111111;
 
-   // read out for debugging
-   // x-coord of line and color index
-   HexDigit Digit0(HEX0, SW[3:0]);
-   HexDigit Digit1(HEX1, SW[7:4]);
-   HexDigit Digit2(HEX2, SW[9:8]);
-   HexDigit Digit3(HEX3, image_data);
-   assign LEDR[0] = y_cood[SW];
+   wire                                            reset;
+   assign reset = ~KEY[0];
+
+   ////////////////////////////////////////////////////////////////////
+   // Framebuffer
+   ////////////////////////////////////////////////////////////////////
+   localparam NUM_ROWS = 480;
+
+   wire [7:0]                                      framebuffer_read_data [0:NUM_ROWS-1];
+   wire [7:0]                                      framebuffer_write_data [0:NUM_ROWS-1];
+   wire [9:0]                                      framebuffer_read_addr; // read from them all, mux only the one we care about
+   wire [9:0]                                      framebuffer_write_addr [0:NUM_ROWS-1];
+   wire                                            framebuffer_wren [0:NUM_ROWS-1];
+
+   wire                                            VGA_CLK;
+
+   genvar                                          row_ram_i;
+   generate
+      for(row_ram_i=0; row_ram_i < NUM_ROWS; row_ram_i=row_ram_i+1) begin : row_rams
+         Row_RAM ram(
+                     .rdaddress (framebuffer_read_addr),
+                     .q         (framebuffer_read_data[row_ram_i]),
+                     .rdclock   (VGA_CLK),
+                     .wraddress (framebuffer_write_addr[row_ram_i]),
+                     .wrclock   (CLOCK_50),
+                     .wren      (framebuffer_wren[row_ram_i]),
+                     .data      (framebuffer_write_data[row_ram_i]),
+                     );
+
+      end
+   endgenerate
+
 
    ////////////////////////////////////////////////////////////////////
    // Pixel generation state machine
    ////////////////////////////////////////////////////////////////////
-   wire [9:0] mem_datas [0:640];
+   localparam NUM_ROWS_SOLVERS = 10;
 
-   genvar i;
+   wire [26:0] x_0, x_step, y_0, y_step;
+
+   wire [NUM_ROWS_SOLVERS-1:0]                     row_solver_start_request,
+                                                   row_solver_start_grant,
+                                                   row_solver_done;
+
+   wire [9:0]                                      row_solver_results [NUM_ROWS_SOLVERS-1:0];
+
+   Reqs_To_One_Hot #(NUM_ROWS_SOLVERS) (
+                                        .reqs(row_solver_start_request),
+                                        .grants(row_solver_start_grant)
+                                        );
+
+   reg [9:0]                                       row_next_y_idx;
+   reg [26:0]                                      row_next_y_value;
+   wire [26:0]                                     row_next_y_value_adder_out;
+   always @(posedge CLOCK_50) begin
+      if (reset) begin
+         row_next_y_idx <= 0;
+         row_next_y_value <= y_0;
+      end
+      else if (row_solver_start_grant > 0) begin
+         row_next_y_idx <= row_next_y_idx + 1;
+         row_next_y_value <= row_next_y_value_adder_out;
+      end
+   end
+
+   FpAdd FpAdder(CLOCK_50, row_next_y_value, y_step, row_next_y_value_adder_out);
+
+   genvar solver_i;
    generate
-      for(i=0; i < 20; i=i+1) begin : column_modules
-         wire       pipe_output_done;
-         wire [9:0] pipe_output_num_iterations;
+      for(solver_i=0; solver_i < NUM_ROWS_SOLVERS; solver_i=solver_i+1) begin : row_solvers
 
-         wire [26:0] C_A, C_B, C_A_int, C_B_int;
-         Int2Fp ConvertFP_C_A(-16'sd3, C_A_int);
-         Int2Fp ConvertFP_C_B(16'sd1, C_B_int);
-         FpShift SHA(C_A_int, -8'sd2, C_A);
-         FpShift SHB(C_B_int, -8'sd1, C_B);
+         always @(posedge CLOCK_50) begin
 
-         wire       full, empty, q;
-         Mandelbrot_Pipe Pipe(
-                              .clk            (CLOCK2_50),
-                              .reset          (~KEY[0]),
-                              .start          (CLOCK2_50),
-                              .C_A            (C_A),
-                              .C_B            (C_B),
-                              .done           (pipe_output_done),
-                              .num_iterations (pipe_output_num_iterations)
-                              );
-         Row_Output_FIFO Output_FIFO (
-                                      .clock (CLOCK2_50),
-                                      .data  (pipe_output_num_iterations),
-                                      .rdreq (CLOCK2_50),
-                                      .wrreq (pipe_output_done),
-                                      .empty (empty),
-                                      .full  (full),
-                                      .q     (mem_datas[i])
-                                      );
+         end
+
+         Row_Solver solver(
+                           .solver_clk      (CLOCK_50),
+                           .reset           (reset),
+                           .start_request   (row_solver_start_request[solver_i]),
+                           .start_grant     (row_solver_start_grant[solver_i]),
+                           .row_x_reference (x_0),
+                           .row_x_step      (x_step),
+                             .row_y           (row_next_y_value),
+                           .output_value    (row_solver_results[solver_i]),
+                           .output_stb      (row_solver_done[solver_i])
+                           );
       end
    endgenerate
 
    ////////////////////////////////////////////////////////////////////
-   // image write state machine -- bus-master to VGA display memory
+   // VGA machine
    ////////////////////////////////////////////////////////////////////
-   //======================================
-   // Bus controller for AVALON bus-master
-   //======================================
-   wire [31:0] bus_addr ; // Avalon address
-   wire [31:0] video_base_address = 32'h800_0000 ;  // Avalon address
-   wire [3:0]  bus_byte_enable ; // four bit byte read/write mask
-   reg         bus_read  ;       // high when requesting data
-   reg         bus_write ;      //  high when writing data
-   reg [31:0]  bus_write_data ; //  data to send to Avalog bus
-   wire        bus_ack  ;       //  Avalon bus raises this when done
-   wire [31:0] bus_read_data ; // data from Avalon bus
-   reg [30:0]  timer ;
-   reg [3:0]   state ;
-   reg         last_vs, wait_one;
-   reg [19:0]  vs_count ;
-   reg         last_hs, wait_one_hs ;
-   reg [19:0]  hs_count ;
 
-   // pixel address is
-   // from C: pixel_ptr = 0h0800_0000 + (y_cood<<10) + x_cood ;
-   reg [9:0]   x_cood, y_cood ;
-   assign bus_addr = video_base_address + {22'b0,x_cood} + ({22'b0,y_cood}<<10) ;
-   // M10k block memory address
-   // from the pixel state machine
-   assign mem_addr = x_cood + (y_cood<<10) ;
+   wire CLOCK_27;
+   wire	VGA_CTRL_CLK;
+   wire	AUD_CTRL_CLK;
+   wire	DLY_RST;
 
-   // use byte-wide bus-master
-   assign bus_byte_enable = 4'b0001;
+   assign	TD_RESET_N	=	1'b1;	//	Allow 27 MHz
+   assign	AUD_ADCLRCK	=	AUD_DACLRCK;
+   assign	AUD_XCK		=	AUD_CTRL_CLK;
 
-   // bus-master state machine
-   always @(posedge CLOCK2_50) begin //CLOCK_50
+   VGA_Audio_PLL p1(.areset(~reset),.inclk0(CLOCK_27),.c0(VGA_CTRL_CLK),.c1(AUD_CTRL_CLK),.c2(VGA_CLK));
 
-      // reset state machine and read/write controls
-      if (~KEY[0]) begin
-         state <= 0 ;
-         bus_read <= 0 ; // set to one if a read opeation from bus
-         bus_write <= 0 ; // set to on if a write operation to bus
-         // base address of upper-left corner of the screen
-         x_cood <= 0 ;
-         y_cood <= 0 ;
-         timer <= 0;
-      end
-      else begin
-         timer <= timer + 1;
-      end
+   wire [9:0] vga_ctrl_x_coord, vga_ctrl_y_coord;
+   wire [9:0] vga_ctrl_r, vga_ctrl_g, vga_ctrl_b;
+   wire [19:0] mVGA_ADDR;
 
-      // add time to Vsync
-      last_vs <= VGA_VS ;
-      if (VGA_VS && ~last_vs) begin
-         wait_one <= 1 ;
-         vs_count <= 0 ;
-      end
-      else if (vs_count<97000) begin // slightly smaller than duration of the vsync "backporch"
-         vs_count <= vs_count + 1 ;
-      end
-      else begin
-         wait_one <= 0 ;
-      end
-      // add time to Hsync
-      last_hs <= VGA_HS ;
-      if (VGA_HS && ~last_hs) begin
-         wait_one_hs <= 1 ;
-         hs_count <= 0 ;
-      end
-      else if (hs_count<90) begin // slightly smaller than duration of the hsync "backporch"
-         hs_count <= hs_count + 1 ;
-      end
-      else begin
-         wait_one_hs <= 0 ;
-      end
+   assign framebuffer_read_addr = vga_ctrl_y_coord;
 
-      // write to the bus-master
-      // but wait for when VGA is not reading
-      if (state==0 && (~VGA_VS | ~VGA_HS | wait_one | wait_one_hs)) begin // && timer==0 // && (~VGA_VS | ~VGA_HS) // && ~VGA_BLANK_N
-         state <= 2;
+   assign vga_ctrl_r = framebuffer_read_data[vga_ctrl_x_coord][7:6]; // TODO delay x cood
 
-         // write all the pixels
-         x_cood <= x_cood + 10'd1 ;
-         if (x_cood > 10'd639) begin
-            x_cood <= 0 ;
-            y_cood <= y_cood + 10'd1 ;
-            if (y_cood > 10'd479) begin
-               y_cood <= 0 ;
-            end
-         end
 
-         // set up the write data = white_red_green_blue
-         // white = ff; red = e0; green = 1c; blue = 03;
-         // AND signal the write request to the Avalon bus
-         // mem_data is from the pixel state machine
-         if (mem_datas[x_cood] == 2'b11) begin
-            bus_write_data <= 8'hff ;
-         end
-         else if (mem_datas[x_cood] == 2'b10) begin
-            bus_write_data <= 8'he0 ;
-         end
-         else if (mem_datas[x_cood] == 2'b01) begin
-            bus_write_data <= 8'h1c ;
-         end
-         else bus_write_data <= 8'h00 ;
-
-         // signal the bus that a write is requested
-         bus_write <= 1'b1 ;
-      end
-
-      // detect bus-transaction-complete ACK
-      // You MUST do this check
-      if (state==2 && bus_ack==1) begin
-         state <= 0 ;
-         bus_write <= 0;
-      end
-
-   end // always @(posedge state_clock --> CLOCK2_50)
-   ////////////////////////////////////////////////////////////////////
+   VGA_Controller vga_controller (
+                                  // Host Side
+                                  .iCursor_RGB_EN(4'b0111),
+                                  .oAddress(mVGA_ADDR),
+                                  .oCoord_X(vga_ctrl_x_coord),
+                                  .oCoord_Y(vga_ctrl_y_coord),
+                                  .iRed(vga_ctrl_r),
+                                  .iGreen(vga_ctrl_g),
+                                  .iBlue(vga_ctrl_b),
+                                  // VGA Side
+                                  .oVGA_R(VGA_R),
+                                  .oVGA_G(VGA_G),
+                                  .oVGA_B(VGA_B),
+                                  .oVGA_H_SYNC(VGA_HS),
+                                  .oVGA_V_SYNC(VGA_VS),
+                                  .oVGA_SYNC(VGA_SYNC_N),
+                                  .oVGA_BLANK(VGA_BLANK_N),
+                                  // control Signal
+                                  .iCLK(VGA_CTRL_CLK),
+                                  .iRST_N(reset)
+                                  );
 
 
    //=======================================================
@@ -543,43 +513,6 @@ module DE1_SoC_Computer (
                                // Global signals
                                .system_pll_ref_clk_clk                                 (CLOCK_50), //?
                                .system_pll_ref_reset_reset                     (1'b0),
-
-                               // AV Config
-                               .av_config_SCLK                                                 (FPGA_I2C_SCLK),
-                               .av_config_SDAT                                                 (FPGA_I2C_SDAT),
-
-                               // bus master
-                               .bus_master_video_external_interface_address     (bus_addr),     // .address
-                               .bus_master_video_external_interface_byte_enable (bus_byte_enable), //  .byte_enable
-                               .bus_master_video_external_interface_read        (bus_read),        //   .read
-                               .bus_master_video_external_interface_write       (bus_write),       //   .write
-                               .bus_master_video_external_interface_write_data  (bus_write_data),  //   .write_data
-                               .bus_master_video_external_interface_acknowledge (bus_ack), //    .acknowledge
-                               .bus_master_video_external_interface_read_data   (bus_read_data),    //   .read_data
-
-                               // VGA Subsystem
-                               .vga_pll_ref_clk_clk                                    (CLOCK2_50),
-                               .vga_pll_ref_reset_reset                                (1'b0),
-                               .vga_CLK                                                                                (VGA_CLK),
-                               .vga_BLANK                                                                      (VGA_BLANK_N),
-                               .vga_SYNC                                                                       (VGA_SYNC_N),
-                               .vga_HS                                                                         (VGA_HS),
-                               .vga_VS                                                                         (VGA_VS),
-                               .vga_R                                                                          (VGA_R),
-                               .vga_G                                                                          (VGA_G),
-                               .vga_B                                                                          (VGA_B),
-
-                               // SDRAM
-                               .sdram_clk_clk                                                          (DRAM_CLK),
-                               .sdram_addr                                                                  (DRAM_ADDR),
-                               .sdram_ba                                                                       (DRAM_BA),
-                               .sdram_cas_n                                                            (DRAM_CAS_N),
-                               .sdram_cke                                                                      (DRAM_CKE),
-                               .sdram_cs_n                                                                     (DRAM_CS_N),
-                               .sdram_dq                                                                       (DRAM_DQ),
-                               .sdram_dqm                                                                      ({DRAM_UDQM,DRAM_LDQM}),
-                               .sdram_ras_n                                                            (DRAM_RAS_N),
-                               .sdram_we_n                                                                     (DRAM_WE_N),
 
                                ////////////////////////////////////
                                // HPS Side
@@ -683,6 +616,12 @@ module DE1_SoC_Computer (
                                .hps_io_hps_io_usb1_inst_CLK            (HPS_USB_CLKOUT),
                                .hps_io_hps_io_usb1_inst_STP            (HPS_USB_STP),
                                .hps_io_hps_io_usb1_inst_DIR            (HPS_USB_DIR),
-                               .hps_io_hps_io_usb1_inst_NXT            (HPS_USB_NXT)
+                               .hps_io_hps_io_usb1_inst_NXT            (HPS_USB_NXT),
+
+                               .x_0_export                      (x_0),
+                               .x_step_export                   (x_step),
+                               .y_0_export                      (y_0),
+                               .y_step_export                   (y_step),
+                               .clk_27_clk          (CLOCK_27)
                                );
 endmodule
