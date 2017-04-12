@@ -368,91 +368,10 @@ module DE1_SoC_Computer (
    wire                                            reset;
    assign reset = ~KEY[0];
 
-   ////////////////////////////////////////////////////////////////////
-   // Framebuffer
-   ////////////////////////////////////////////////////////////////////
-   localparam NUM_ROWS = 480;
-
-   wire [7:0]                                      framebuffer_read_data [0:NUM_ROWS-1];
-   wire [7:0]                                      framebuffer_write_data [0:NUM_ROWS-1];
-   wire [9:0]                                      framebuffer_read_addr; // read from them all, mux only the one we care about
-   wire [9:0]                                      framebuffer_write_addr [0:NUM_ROWS-1];
-   wire                                            framebuffer_wren [0:NUM_ROWS-1];
-
-   wire                                            VGA_CLK;
-
-   genvar                                          row_ram_i;
-   generate
-      for(row_ram_i=0; row_ram_i < NUM_ROWS; row_ram_i=row_ram_i+1) begin : row_rams
-         Row_RAM ram(
-                     .rdaddress (framebuffer_read_addr),
-                     .q         (framebuffer_read_data[row_ram_i]),
-                     .rdclock   (VGA_CLK),
-                     .wraddress (framebuffer_write_addr[row_ram_i]),
-                     .wrclock   (CLOCK_50),
-                     .wren      (framebuffer_wren[row_ram_i]),
-                     .data      (framebuffer_write_data[row_ram_i]),
-                     );
-
-      end
-   endgenerate
-
 
    ////////////////////////////////////////////////////////////////////
    // Pixel generation state machine
    ////////////////////////////////////////////////////////////////////
-   localparam NUM_ROWS_SOLVERS = 10;
-
-   wire [26:0] x_0, x_step, y_0, y_step;
-
-   wire [NUM_ROWS_SOLVERS-1:0]                     row_solver_start_request,
-                                                   row_solver_start_grant,
-                                                   row_solver_done;
-
-   wire [9:0]                                      row_solver_results [NUM_ROWS_SOLVERS-1:0];
-
-   Reqs_To_One_Hot #(NUM_ROWS_SOLVERS) (
-                                        .reqs(row_solver_start_request),
-                                        .grants(row_solver_start_grant)
-                                        );
-
-   reg [9:0]                                       row_next_y_idx;
-   reg [26:0]                                      row_next_y_value;
-   wire [26:0]                                     row_next_y_value_adder_out;
-   always @(posedge CLOCK_50) begin
-      if (reset) begin
-         row_next_y_idx <= 0;
-         row_next_y_value <= y_0;
-      end
-      else if (row_solver_start_grant > 0) begin
-         row_next_y_idx <= row_next_y_idx + 1;
-         row_next_y_value <= row_next_y_value_adder_out;
-      end
-   end
-
-   FpAdd FpAdder(CLOCK_50, row_next_y_value, y_step, row_next_y_value_adder_out);
-
-   genvar solver_i;
-   generate
-      for(solver_i=0; solver_i < NUM_ROWS_SOLVERS; solver_i=solver_i+1) begin : row_solvers
-
-         always @(posedge CLOCK_50) begin
-
-         end
-
-         Row_Solver solver(
-                           .solver_clk      (CLOCK_50),
-                           .reset           (reset),
-                           .start_request   (row_solver_start_request[solver_i]),
-                           .start_grant     (row_solver_start_grant[solver_i]),
-                           .row_x_reference (x_0),
-                           .row_x_step      (x_step),
-                             .row_y           (row_next_y_value),
-                           .output_value    (row_solver_results[solver_i]),
-                           .output_stb      (row_solver_done[solver_i])
-                           );
-      end
-   endgenerate
 
    ////////////////////////////////////////////////////////////////////
    // VGA machine
