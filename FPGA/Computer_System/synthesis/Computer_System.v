@@ -8,7 +8,7 @@ module Computer_System (
 		output wire        av_config_SCLK,                  //                      .SCLK
 		output wire        clk_100mhz_clk,                  //            clk_100mhz.clk
 		input  wire        clock_bridge_0_in_clk_clk,       // clock_bridge_0_in_clk.clk
-		input  wire [9:0]  frame_ms_export,                 //              frame_ms.export
+		input  wire [31:0] frame_ms_export,                 //              frame_ms.export
 		output wire        hps_io_hps_io_emac1_inst_TX_CLK, //                hps_io.hps_io_emac1_inst_TX_CLK
 		output wire        hps_io_hps_io_emac1_inst_TXD0,   //                      .hps_io_emac1_inst_TXD0
 		output wire        hps_io_hps_io_emac1_inst_TXD1,   //                      .hps_io_emac1_inst_TXD1

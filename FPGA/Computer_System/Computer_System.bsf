@@ -34,8 +34,8 @@ agreement for further details.
 	(port
 		(pt 0 168)
 		(input)
-		(text "frame_ms_export[9..0]" (rect 0 0 94 12)(font "Arial" (font_size 8)))
-		(text "frame_ms_export[9..0]" (rect 4 157 130 168)(font "Arial" (font_size 8)))
+		(text "frame_ms_export[31..0]" (rect 0 0 97 12)(font "Arial" (font_size 8)))
+		(text "frame_ms_export[31..0]" (rect 4 157 136 168)(font "Arial" (font_size 8)))
 		(line (pt 0 168)(pt 208 168)(line_width 3))
 	)
 	(port

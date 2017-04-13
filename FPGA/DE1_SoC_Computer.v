@@ -402,7 +402,7 @@ module DE1_SoC_Computer (
    // ---------- time the frame generation ----------
 
    reg [15:0]                                      clock_50_to_ms_timer;
-   reg [9:0]                                       frame_time_ms_accum, frame_time_ms;
+   reg [31:0]                                       frame_time_ms_accum, frame_time_ms;
 
    always @(posedge CLOCK_50) begin
       clock_50_to_ms_timer <= clock_50_to_ms_timer + 1;

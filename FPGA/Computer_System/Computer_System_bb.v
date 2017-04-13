@@ -105,7 +105,7 @@ module Computer_System (
 	output		av_config_SCLK;
 	output		clk_100mhz_clk;
 	input		clock_bridge_0_in_clk_clk;
-	input	[9:0]	frame_ms_export;
+	input	[31:0]	frame_ms_export;
 	output		hps_io_hps_io_emac1_inst_TX_CLK;
 	output		hps_io_hps_io_emac1_inst_TXD0;
 	output		hps_io_hps_io_emac1_inst_TXD1;

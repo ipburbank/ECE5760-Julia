@@ -5,11 +5,11 @@
  version="1.0"
  fabric="QSYS">
  <!-- Format version 16.1 203 (Future versions may contain additional information.) -->
- <!-- 2017.04.13.04:07:10 -->
+ <!-- 2017.04.13.05:20:25 -->
  <!-- A collection of modules and connections -->
  <parameter name="AUTO_GENERATION_ID">
   <type>java.lang.Integer</type>
-  <value>1492070812</value>
+  <value>1492075202</value>
   <derived>false</derived>
   <enabled>true</enabled>
   <visible>false</visible>
@@ -75647,7 +75647,7 @@ parameters are a RESULT of the module parameters. -->
 the requested settings for a module instance. -->
   <parameter name="AUTO_GENERATION_ID">
    <type>java.lang.Integer</type>
-   <value>1492070812</value>
+   <value>1492075202</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>false</visible>
@@ -83570,7 +83570,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.CMacro.DATA_WIDTH</name>
-   <value>10</value>
+   <value>32</value>
   </assignment>
   <assignment>
    <name>embeddedsw.CMacro.DO_TEST_BENCH_WIRING</name>
@@ -83622,7 +83622,7 @@ the requested settings for a module instance. -->
   </assignment>
   <assignment>
    <name>embeddedsw.dts.params.altr,gpio-bank-width</name>
-   <value>10</value>
+   <value>32</value>
   </assignment>
   <assignment>
    <name>embeddedsw.dts.params.resetvalue</name>
@@ -83714,7 +83714,7 @@ the requested settings for a module instance. -->
   </parameter>
   <parameter name="width">
    <type>int</type>
-   <value>10</value>
+   <value>32</value>
    <derived>false</derived>
    <enabled>true</enabled>
    <visible>true</visible>
@@ -84304,7 +84304,7 @@ parameters are a RESULT of the module parameters. -->
    <port>
     <name>in_port</name>
     <direction>Input</direction>
-    <width>10</width>
+    <width>32</width>
     <role>export</role>
    </port>
   </interface>
