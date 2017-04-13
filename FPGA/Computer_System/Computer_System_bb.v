@@ -2,7 +2,9 @@
 module Computer_System (
 	av_config_SDAT,
 	av_config_SCLK,
+	clk_100mhz_clk,
 	clock_bridge_0_in_clk_clk,
+	frame_ms_export,
 	hps_io_hps_io_emac1_inst_TX_CLK,
 	hps_io_hps_io_emac1_inst_TXD0,
 	hps_io_hps_io_emac1_inst_TXD1,
@@ -59,6 +61,8 @@ module Computer_System (
 	hps_io_hps_io_gpio_inst_GPIO53,
 	hps_io_hps_io_gpio_inst_GPIO54,
 	hps_io_hps_io_gpio_inst_GPIO61,
+	init_x_export,
+	init_y_export,
 	memory_mem_a,
 	memory_mem_ba,
 	memory_mem_ck,
@@ -75,29 +79,15 @@ module Computer_System (
 	memory_mem_odt,
 	memory_mem_dm,
 	memory_oct_rzqin,
-	onchip_sram_s1_address,
-	onchip_sram_s1_clken,
-	onchip_sram_s1_chipselect,
-	onchip_sram_s1_write,
-	onchip_sram_s1_readdata,
-	onchip_sram_s1_writedata,
-	onchip_sram_s1_byteenable,
+	num_iter_export,
 	onchip_vga_buffer_s1_address,
 	onchip_vga_buffer_s1_clken,
 	onchip_vga_buffer_s1_chipselect,
 	onchip_vga_buffer_s1_write,
 	onchip_vga_buffer_s1_readdata,
 	onchip_vga_buffer_s1_writedata,
-	sdram_addr,
-	sdram_ba,
-	sdram_cas_n,
-	sdram_cke,
-	sdram_cs_n,
-	sdram_dq,
-	sdram_dqm,
-	sdram_ras_n,
-	sdram_we_n,
 	sdram_clk_clk,
+	step_export,
 	system_pll_ref_clk_clk,
 	system_pll_ref_reset_reset,
 	vga_CLK,
@@ -113,7 +103,9 @@ module Computer_System (
 
 	inout		av_config_SDAT;
 	output		av_config_SCLK;
+	output		clk_100mhz_clk;
 	input		clock_bridge_0_in_clk_clk;
+	input	[9:0]	frame_ms_export;
 	output		hps_io_hps_io_emac1_inst_TX_CLK;
 	output		hps_io_hps_io_emac1_inst_TXD0;
 	output		hps_io_hps_io_emac1_inst_TXD1;
@@ -170,6 +162,8 @@ module Computer_System (
 	inout		hps_io_hps_io_gpio_inst_GPIO53;
 	inout		hps_io_hps_io_gpio_inst_GPIO54;
 	inout		hps_io_hps_io_gpio_inst_GPIO61;
+	output	[26:0]	init_x_export;
+	output	[26:0]	init_y_export;
 	output	[14:0]	memory_mem_a;
 	output	[2:0]	memory_mem_ba;
 	output		memory_mem_ck;
@@ -186,29 +180,15 @@ module Computer_System (
 	output		memory_mem_odt;
 	output	[3:0]	memory_mem_dm;
 	input		memory_oct_rzqin;
-	input	[7:0]	onchip_sram_s1_address;
-	input		onchip_sram_s1_clken;
-	input		onchip_sram_s1_chipselect;
-	input		onchip_sram_s1_write;
-	output	[31:0]	onchip_sram_s1_readdata;
-	input	[31:0]	onchip_sram_s1_writedata;
-	input	[3:0]	onchip_sram_s1_byteenable;
+	output	[9:0]	num_iter_export;
 	input	[18:0]	onchip_vga_buffer_s1_address;
 	input		onchip_vga_buffer_s1_clken;
 	input		onchip_vga_buffer_s1_chipselect;
 	input		onchip_vga_buffer_s1_write;
 	output	[7:0]	onchip_vga_buffer_s1_readdata;
 	input	[7:0]	onchip_vga_buffer_s1_writedata;
-	output	[12:0]	sdram_addr;
-	output	[1:0]	sdram_ba;
-	output		sdram_cas_n;
-	output		sdram_cke;
-	output		sdram_cs_n;
-	inout	[15:0]	sdram_dq;
-	output	[1:0]	sdram_dqm;
-	output		sdram_ras_n;
-	output		sdram_we_n;
 	output		sdram_clk_clk;
+	output	[26:0]	step_export;
 	input		system_pll_ref_clk_clk;
 	input		system_pll_ref_reset_reset;
 	output		vga_CLK;

@@ -1,7 +1,9 @@
 	Computer_System u0 (
 		.av_config_SDAT                  (<connected-to-av_config_SDAT>),                  //             av_config.SDAT
 		.av_config_SCLK                  (<connected-to-av_config_SCLK>),                  //                      .SCLK
+		.clk_100mhz_clk                  (<connected-to-clk_100mhz_clk>),                  //            clk_100mhz.clk
 		.clock_bridge_0_in_clk_clk       (<connected-to-clock_bridge_0_in_clk_clk>),       // clock_bridge_0_in_clk.clk
+		.frame_ms_export                 (<connected-to-frame_ms_export>),                 //              frame_ms.export
 		.hps_io_hps_io_emac1_inst_TX_CLK (<connected-to-hps_io_hps_io_emac1_inst_TX_CLK>), //                hps_io.hps_io_emac1_inst_TX_CLK
 		.hps_io_hps_io_emac1_inst_TXD0   (<connected-to-hps_io_hps_io_emac1_inst_TXD0>),   //                      .hps_io_emac1_inst_TXD0
 		.hps_io_hps_io_emac1_inst_TXD1   (<connected-to-hps_io_hps_io_emac1_inst_TXD1>),   //                      .hps_io_emac1_inst_TXD1
@@ -58,6 +60,8 @@
 		.hps_io_hps_io_gpio_inst_GPIO53  (<connected-to-hps_io_hps_io_gpio_inst_GPIO53>),  //                      .hps_io_gpio_inst_GPIO53
 		.hps_io_hps_io_gpio_inst_GPIO54  (<connected-to-hps_io_hps_io_gpio_inst_GPIO54>),  //                      .hps_io_gpio_inst_GPIO54
 		.hps_io_hps_io_gpio_inst_GPIO61  (<connected-to-hps_io_hps_io_gpio_inst_GPIO61>),  //                      .hps_io_gpio_inst_GPIO61
+		.init_x_export                   (<connected-to-init_x_export>),                   //                init_x.export
+		.init_y_export                   (<connected-to-init_y_export>),                   //                init_y.export
 		.memory_mem_a                    (<connected-to-memory_mem_a>),                    //                memory.mem_a
 		.memory_mem_ba                   (<connected-to-memory_mem_ba>),                   //                      .mem_ba
 		.memory_mem_ck                   (<connected-to-memory_mem_ck>),                   //                      .mem_ck
@@ -74,29 +78,15 @@
 		.memory_mem_odt                  (<connected-to-memory_mem_odt>),                  //                      .mem_odt
 		.memory_mem_dm                   (<connected-to-memory_mem_dm>),                   //                      .mem_dm
 		.memory_oct_rzqin                (<connected-to-memory_oct_rzqin>),                //                      .oct_rzqin
-		.onchip_sram_s1_address          (<connected-to-onchip_sram_s1_address>),          //        onchip_sram_s1.address
-		.onchip_sram_s1_clken            (<connected-to-onchip_sram_s1_clken>),            //                      .clken
-		.onchip_sram_s1_chipselect       (<connected-to-onchip_sram_s1_chipselect>),       //                      .chipselect
-		.onchip_sram_s1_write            (<connected-to-onchip_sram_s1_write>),            //                      .write
-		.onchip_sram_s1_readdata         (<connected-to-onchip_sram_s1_readdata>),         //                      .readdata
-		.onchip_sram_s1_writedata        (<connected-to-onchip_sram_s1_writedata>),        //                      .writedata
-		.onchip_sram_s1_byteenable       (<connected-to-onchip_sram_s1_byteenable>),       //                      .byteenable
+		.num_iter_export                 (<connected-to-num_iter_export>),                 //              num_iter.export
 		.onchip_vga_buffer_s1_address    (<connected-to-onchip_vga_buffer_s1_address>),    //  onchip_vga_buffer_s1.address
 		.onchip_vga_buffer_s1_clken      (<connected-to-onchip_vga_buffer_s1_clken>),      //                      .clken
 		.onchip_vga_buffer_s1_chipselect (<connected-to-onchip_vga_buffer_s1_chipselect>), //                      .chipselect
 		.onchip_vga_buffer_s1_write      (<connected-to-onchip_vga_buffer_s1_write>),      //                      .write
 		.onchip_vga_buffer_s1_readdata   (<connected-to-onchip_vga_buffer_s1_readdata>),   //                      .readdata
 		.onchip_vga_buffer_s1_writedata  (<connected-to-onchip_vga_buffer_s1_writedata>),  //                      .writedata
-		.sdram_addr                      (<connected-to-sdram_addr>),                      //                 sdram.addr
-		.sdram_ba                        (<connected-to-sdram_ba>),                        //                      .ba
-		.sdram_cas_n                     (<connected-to-sdram_cas_n>),                     //                      .cas_n
-		.sdram_cke                       (<connected-to-sdram_cke>),                       //                      .cke
-		.sdram_cs_n                      (<connected-to-sdram_cs_n>),                      //                      .cs_n
-		.sdram_dq                        (<connected-to-sdram_dq>),                        //                      .dq
-		.sdram_dqm                       (<connected-to-sdram_dqm>),                       //                      .dqm
-		.sdram_ras_n                     (<connected-to-sdram_ras_n>),                     //                      .ras_n
-		.sdram_we_n                      (<connected-to-sdram_we_n>),                      //                      .we_n
 		.sdram_clk_clk                   (<connected-to-sdram_clk_clk>),                   //             sdram_clk.clk
+		.step_export                     (<connected-to-step_export>),                     //                  step.export
 		.system_pll_ref_clk_clk          (<connected-to-system_pll_ref_clk_clk>),          //    system_pll_ref_clk.clk
 		.system_pll_ref_reset_reset      (<connected-to-system_pll_ref_reset_reset>),      //  system_pll_ref_reset.reset
 		.vga_CLK                         (<connected-to-vga_CLK>),                         //                   vga.CLK

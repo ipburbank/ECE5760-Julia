@@ -7,15 +7,16 @@
  */
 
 module Mandelbrot_Pipe (
-                        input  wire        clk,
-                        input  wire        reset,
-                        input  wire        start,
-                        input  wire [26:0] C_A_reference,
-                        input  wire [26:0] C_A_step,
-                        input  wire [9:0]  C_A_column,
-                        input  wire [26:0] C_B,
-                        output reg         done,
-                        output wire [9:0]  num_iterations
+                        input wire        clk,
+                        input wire        reset,
+                        input wire        start,
+                        input wire [26:0] C_A_reference,
+                        input wire [26:0] C_A_step,
+                        input wire [9:0]  C_A_column,
+                        input wire [26:0] C_B,
+                        input wire [9:0]  max_iterations,
+                        output reg        done,
+                        output wire [9:0] num_iterations
                         );
 
    // Z_{n+1} = Z_{n}^2 + C
@@ -94,7 +95,7 @@ module Mandelbrot_Pipe (
          // Mul step * idx, add mul + initial
       end
       else begin
-         if (num_iterations_internal > 1000) done <= 1;
+         if (num_iterations_internal > max_iterations) done <= 1;
 
          case (state)
            //cycle_load:begin

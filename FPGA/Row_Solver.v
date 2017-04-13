@@ -9,8 +9,11 @@ module Row_Solver (
                    input wire [26:0] row_x_reference,
                    input wire [26:0] row_x_step,
                    input wire [26:0] row_y,
+                   input wire [8:0]  row_y_idx,
+                   input wire [9:0]  max_iterations,
                    output wire [9:0] output_value,
-                   output wire [9:0] output_column,
+                   output wire [9:0] output_column_idx,
+                   output reg [8:0]  output_row_idx,
                    output wire       output_stb
                    );
 
@@ -40,7 +43,7 @@ module Row_Solver (
 
    reg [2:0]                  state;
    reg [9:0]                  column_idx;
-   assign output_column = column_idx;
+   assign output_column_idx = column_idx;
 
    parameter state_reset=0, state_compute=1;
    always @(posedge solver_clk) begin
@@ -51,6 +54,8 @@ module Row_Solver (
          if (start_grant) begin
             state <= state_compute;
             start_request <= 0;
+
+            output_row_idx <= row_y_idx;
 
             // start the simulation of the first element of the row
             solver_C_A_reference <= row_x_reference;
@@ -82,15 +87,16 @@ module Row_Solver (
    //  Structural coding
    //=======================================================
 
-   Mandelbrot_Pipe Solver(
-                        .clk            (solver_clk),
-                        .reset          (reset),
-                        .start          (solver_start),
-                        .C_A_reference  (solver_C_A_reference),
-                        .C_A_step       (solver_C_A_step),
-                        .C_A_column     (column_idx),
-                        .C_B            (row_y),
-                        .done           (solver_done),
-                        .num_iterations (output_value)
-                        );
+   Mandelbrot_Pipe mandelbrot_pipe(
+                                   .clk            (solver_clk),
+                                   .reset          (reset),
+                                   .start          (solver_start),
+                                   .C_A_reference  (solver_C_A_reference),
+                                   .C_A_step       (solver_C_A_step),
+                                   .C_A_column     (column_idx),
+                                   .C_B            (solver_C_B),
+                                   .max_iterations (max_iterations),
+                                   .done           (solver_done),
+                                   .num_iterations (output_value)
+                                   );
 endmodule

@@ -45,14 +45,14 @@ module testbench_frame();
       wire [26:0] C_A_reference, C_A_reference_num, C_A_step, C_A_step_num, C_B, C_B_int;
    wire [9:0]  C_A_column;
 
-   Int2Fp ConvertFP_C_A_ref(-16'sd1, C_A_reference_num);
-   FpShift SHA(C_A_reference_num, -8'sd1, C_A_reference);
+   Int2Fp ConvertFP_C_A_ref(-16'sd2, C_A_reference);
+   //FpShift SHA(C_A_reference_num, -8'sd1, C_A_reference);
 
    Int2Fp ConvertFP_C_A_step(16'sd1, C_A_step_num);
-   FpShift SHAstep(C_A_step_num, -8'sd2, C_A_step);
+   FpShift SHAstep(C_A_step_num, -8'sd8, C_A_step);
 
-   Int2Fp ConvertFP_C_B(16'sd3, C_B_int);
-   FpShift SHB(C_B_int, -8'sd2, C_B);
+   Int2Fp ConvertFP_C_B(-16'sd1, C_B);
+   //FpShift SHB(C_B_int, -8'sd2, C_B);
 
    wire [9:0]  pixel_x;
    wire [8:0]  pixel_y;
@@ -66,6 +66,7 @@ module testbench_frame();
                        .x_step     (C_A_step),
                        .y_0        (C_B),
                        .y_step     (C_A_step),
+                       .max_iterations (10'd20),
                        .output_clk (clk_50),
                        .output_pixel_x     (pixel_x),
                        .output_pixel_y     (pixel_y),

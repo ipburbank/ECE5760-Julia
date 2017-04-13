@@ -1,4 +1,4 @@
-/* Quartus II 64-Bit Version 15.0.0 Build 145 04/22/2015 SJ Full Version */
+/* Quartus Prime Version 16.1.2 Build 203 01/18/2017 SJ Lite Edition */
 JedecChain;
 	FileRevision(JESD32A);
 	DefaultMfr(6E);
@@ -6,7 +6,7 @@ JedecChain;
 	P ActionCode(Ign)
 		Device PartName(SOCVHPS) MfrSpec(OpMask(0));
 	P ActionCode(Cfg)
-		Device PartName(5CSEMA5F31) Path("G:/From_web_page/video_sram_master_sram_vga/verilog/") File("DE1_SoC_Computer.sof") MfrSpec(OpMask(1));
+		Device PartName(5CSEMA5F31) Path("/home/istvan/Documents/School/17SP/ECE5760/ECE5760-lab4/FPGA/") File("DE1_SoC_Computer.sof") MfrSpec(OpMask(1));
 
 ChainEnd;
 

@@ -13,12 +13,12 @@
    {
       datum _sortIndex
       {
-         value = "1";
+         value = "2";
          type = "int";
       }
       datum sopceditor_expanded
       {
-         value = "0";
+         value = "1";
          type = "boolean";
       }
    }
@@ -34,7 +34,7 @@
    {
       datum _sortIndex
       {
-         value = "2";
+         value = "3";
          type = "int";
       }
    }
@@ -50,7 +50,7 @@
    {
       datum _sortIndex
       {
-         value = "3";
+         value = "4";
          type = "int";
       }
    }
@@ -71,7 +71,7 @@
       }
       datum sopceditor_expanded
       {
-         value = "0";
+         value = "1";
          type = "boolean";
       }
    }
@@ -79,7 +79,7 @@
    {
       datum _sortIndex
       {
-         value = "4";
+         value = "5";
          type = "int";
       }
    }
@@ -107,20 +107,146 @@
          type = "boolean";
       }
    }
+   element clk_0
+   {
+      datum _sortIndex
+      {
+         value = "1";
+         type = "int";
+      }
+   }
    element clock_bridge_0
    {
       datum _sortIndex
       {
-         value = "5";
+         value = "6";
          type = "int";
+      }
+   }
+   element frame_ms
+   {
+      datum _sortIndex
+      {
+         value = "12";
+         type = "int";
+      }
+   }
+   element frame_ms.s1
+   {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "64";
+         type = "String";
+      }
+   }
+   element init_x
+   {
+      datum _sortIndex
+      {
+         value = "8";
+         type = "int";
+      }
+   }
+   element init_x.s1
+   {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "0";
+         type = "String";
+      }
+   }
+   element init_y
+   {
+      datum _sortIndex
+      {
+         value = "10";
+         type = "int";
+      }
+   }
+   element init_y.s1
+   {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "32";
+         type = "String";
+      }
+   }
+   element num_iter
+   {
+      datum _sortIndex
+      {
+         value = "11";
+         type = "int";
+      }
+   }
+   element num_iter.s1
+   {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "48";
+         type = "String";
       }
    }
    element onchip_vga_buffer
    {
       datum _sortIndex
       {
-         value = "6";
+         value = "7";
          type = "int";
+      }
+   }
+   element onchip_vga_buffer.s2
+   {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "0";
+         type = "String";
+      }
+   }
+   element step
+   {
+      datum _sortIndex
+      {
+         value = "9";
+         type = "int";
+      }
+   }
+   element step.s1
+   {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "16";
+         type = "String";
       }
    }
 }
@@ -149,13 +275,34 @@
    internal="AV_Config.external_interface"
    type="conduit"
    dir="end" />
+ <interface name="clk_100mhz" internal="clk_0.clk" type="clock" dir="start" />
  <interface
    name="clock_bridge_0_in_clk"
    internal="clock_bridge_0.in_clk"
    type="clock"
    dir="end" />
+ <interface
+   name="frame_ms"
+   internal="frame_ms.external_connection"
+   type="conduit"
+   dir="end" />
  <interface name="hps_io" internal="ARM_A9_HPS.hps_io" type="conduit" dir="end" />
+ <interface
+   name="init_x"
+   internal="init_x.external_connection"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="init_y"
+   internal="init_y.external_connection"
+   type="conduit"
+   dir="end" />
  <interface name="memory" internal="ARM_A9_HPS.memory" type="conduit" dir="end" />
+ <interface
+   name="num_iter"
+   internal="num_iter.external_connection"
+   type="conduit"
+   dir="end" />
  <interface
    name="onchip_vga_buffer_s1"
    internal="onchip_vga_buffer.s1"
@@ -166,6 +313,11 @@
    internal="System_PLL.sdram_clk"
    type="clock"
    dir="start" />
+ <interface
+   name="step"
+   internal="step.external_connection"
+   type="conduit"
+   dir="end" />
  <interface
    name="system_pll_ref_clk"
    internal="System_PLL.ref_clk"
@@ -768,13 +920,19 @@
   <parameter name="AUTO_GENERATION_ID" value="0" />
   <parameter name="AUTO_PIXEL_DMA_MASTER_ADDRESS_MAP"><![CDATA[<address-map><slave name='onchip_vga_buffer.s2' start='0x0' end='0x4B000' /></address-map>]]></parameter>
   <parameter name="AUTO_PIXEL_DMA_MASTER_ADDRESS_WIDTH" value="AddressWidth = 19" />
-  <parameter name="AUTO_SYS_CLK_CLOCK_DOMAIN" value="9" />
+  <parameter name="AUTO_SYS_CLK_CLOCK_DOMAIN" value="10" />
   <parameter name="AUTO_SYS_CLK_CLOCK_RATE" value="100000000" />
-  <parameter name="AUTO_SYS_CLK_RESET_DOMAIN" value="9" />
+  <parameter name="AUTO_SYS_CLK_RESET_DOMAIN" value="10" />
   <parameter name="AUTO_UNIQUE_ID">$${FILENAME}_VGA_Subsystem</parameter>
-  <parameter name="AUTO_VGA_PLL_REF_CLK_CLOCK_DOMAIN" value="5" />
+  <parameter name="AUTO_VGA_PLL_REF_CLK_CLOCK_DOMAIN" value="6" />
   <parameter name="AUTO_VGA_PLL_REF_CLK_CLOCK_RATE" value="0" />
-  <parameter name="AUTO_VGA_PLL_REF_CLK_RESET_DOMAIN" value="5" />
+  <parameter name="AUTO_VGA_PLL_REF_CLK_RESET_DOMAIN" value="6" />
+ </module>
+ <module name="clk_0" kind="clock_source" version="16.1" enabled="1">
+  <parameter name="clockFrequency" value="100000000" />
+  <parameter name="clockFrequencyKnown" value="true" />
+  <parameter name="inputClockFrequency" value="100000000" />
+  <parameter name="resetSynchronousEdges" value="NONE" />
  </module>
  <module
    name="clock_bridge_0"
@@ -782,8 +940,64 @@
    version="16.1"
    enabled="1">
   <parameter name="DERIVED_CLOCK_RATE" value="0" />
-  <parameter name="EXPLICIT_CLOCK_RATE" value="50000000" />
+  <parameter name="EXPLICIT_CLOCK_RATE" value="100000000" />
   <parameter name="NUM_CLOCK_OUTPUTS" value="1" />
+ </module>
+ <module name="frame_ms" kind="altera_avalon_pio" version="16.1" enabled="1">
+  <parameter name="bitClearingEdgeCapReg" value="false" />
+  <parameter name="bitModifyingOutReg" value="false" />
+  <parameter name="captureEdge" value="false" />
+  <parameter name="clockRate" value="100000000" />
+  <parameter name="direction" value="Input" />
+  <parameter name="edgeType" value="RISING" />
+  <parameter name="generateIRQ" value="false" />
+  <parameter name="irqType" value="LEVEL" />
+  <parameter name="resetValue" value="0" />
+  <parameter name="simDoTestBenchWiring" value="false" />
+  <parameter name="simDrivenValue" value="0" />
+  <parameter name="width" value="10" />
+ </module>
+ <module name="init_x" kind="altera_avalon_pio" version="16.1" enabled="1">
+  <parameter name="bitClearingEdgeCapReg" value="false" />
+  <parameter name="bitModifyingOutReg" value="false" />
+  <parameter name="captureEdge" value="false" />
+  <parameter name="clockRate" value="100000000" />
+  <parameter name="direction" value="Output" />
+  <parameter name="edgeType" value="RISING" />
+  <parameter name="generateIRQ" value="false" />
+  <parameter name="irqType" value="LEVEL" />
+  <parameter name="resetValue" value="100663296" />
+  <parameter name="simDoTestBenchWiring" value="false" />
+  <parameter name="simDrivenValue" value="0" />
+  <parameter name="width" value="27" />
+ </module>
+ <module name="init_y" kind="altera_avalon_pio" version="16.1" enabled="1">
+  <parameter name="bitClearingEdgeCapReg" value="false" />
+  <parameter name="bitModifyingOutReg" value="false" />
+  <parameter name="captureEdge" value="false" />
+  <parameter name="clockRate" value="100000000" />
+  <parameter name="direction" value="Output" />
+  <parameter name="edgeType" value="RISING" />
+  <parameter name="generateIRQ" value="false" />
+  <parameter name="irqType" value="LEVEL" />
+  <parameter name="resetValue" value="100401152" />
+  <parameter name="simDoTestBenchWiring" value="false" />
+  <parameter name="simDrivenValue" value="0" />
+  <parameter name="width" value="27" />
+ </module>
+ <module name="num_iter" kind="altera_avalon_pio" version="16.1" enabled="1">
+  <parameter name="bitClearingEdgeCapReg" value="false" />
+  <parameter name="bitModifyingOutReg" value="false" />
+  <parameter name="captureEdge" value="false" />
+  <parameter name="clockRate" value="100000000" />
+  <parameter name="direction" value="Output" />
+  <parameter name="edgeType" value="RISING" />
+  <parameter name="generateIRQ" value="false" />
+  <parameter name="irqType" value="LEVEL" />
+  <parameter name="resetValue" value="1000" />
+  <parameter name="simDoTestBenchWiring" value="false" />
+  <parameter name="simDrivenValue" value="0" />
+  <parameter name="width" value="10" />
  </module>
  <module
    name="onchip_vga_buffer"
@@ -816,6 +1030,20 @@
   <parameter name="useNonDefaultInitFile" value="false" />
   <parameter name="useShallowMemBlocks" value="false" />
   <parameter name="writable" value="true" />
+ </module>
+ <module name="step" kind="altera_avalon_pio" version="16.1" enabled="1">
+  <parameter name="bitClearingEdgeCapReg" value="false" />
+  <parameter name="bitModifyingOutReg" value="false" />
+  <parameter name="captureEdge" value="false" />
+  <parameter name="clockRate" value="100000000" />
+  <parameter name="direction" value="Output" />
+  <parameter name="edgeType" value="RISING" />
+  <parameter name="generateIRQ" value="false" />
+  <parameter name="irqType" value="LEVEL" />
+  <parameter name="resetValue" value="31195136" />
+  <parameter name="simDoTestBenchWiring" value="false" />
+  <parameter name="simDrivenValue" value="0" />
+  <parameter name="width" value="27" />
  </module>
  <connection
    kind="avalon"
@@ -851,6 +1079,51 @@
    end="VGA_Subsystem.char_buffer_control_slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x3030" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="16.1"
+   start="ARM_A9_HPS.h2f_lw_axi_master"
+   end="init_x.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="16.1"
+   start="ARM_A9_HPS.h2f_lw_axi_master"
+   end="step.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0010" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="16.1"
+   start="ARM_A9_HPS.h2f_lw_axi_master"
+   end="init_y.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0020" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="16.1"
+   start="ARM_A9_HPS.h2f_lw_axi_master"
+   end="num_iter.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0030" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="16.1"
+   start="ARM_A9_HPS.h2f_lw_axi_master"
+   end="frame_ms.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0040" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -894,7 +1167,33 @@
    kind="clock"
    version="16.1"
    start="System_PLL.sys_clk"
+   end="init_x.clk" />
+ <connection kind="clock" version="16.1" start="System_PLL.sys_clk" end="step.clk" />
+ <connection
+   kind="clock"
+   version="16.1"
+   start="System_PLL.sys_clk"
+   end="init_y.clk" />
+ <connection
+   kind="clock"
+   version="16.1"
+   start="System_PLL.sys_clk"
+   end="num_iter.clk" />
+ <connection
+   kind="clock"
+   version="16.1"
+   start="System_PLL.sys_clk"
+   end="frame_ms.clk" />
+ <connection
+   kind="clock"
+   version="16.1"
+   start="System_PLL.sys_clk"
    end="onchip_vga_buffer.clk2" />
+ <connection
+   kind="clock"
+   version="16.1"
+   start="System_PLL.sys_clk"
+   end="clk_0.clk_in" />
  <connection
    kind="clock"
    version="16.1"
@@ -949,12 +1248,42 @@
    kind="reset"
    version="16.1"
    start="System_PLL.reset_source"
+   end="clk_0.clk_in_reset" />
+ <connection
+   kind="reset"
+   version="16.1"
+   start="System_PLL.reset_source"
    end="AV_Config.reset" />
  <connection
    kind="reset"
    version="16.1"
    start="System_PLL.reset_source"
    end="Pixel_DMA_Addr_Translation.reset" />
+ <connection
+   kind="reset"
+   version="16.1"
+   start="System_PLL.reset_source"
+   end="init_x.reset" />
+ <connection
+   kind="reset"
+   version="16.1"
+   start="System_PLL.reset_source"
+   end="step.reset" />
+ <connection
+   kind="reset"
+   version="16.1"
+   start="System_PLL.reset_source"
+   end="init_y.reset" />
+ <connection
+   kind="reset"
+   version="16.1"
+   start="System_PLL.reset_source"
+   end="num_iter.reset" />
+ <connection
+   kind="reset"
+   version="16.1"
+   start="System_PLL.reset_source"
+   end="frame_ms.reset" />
  <connection
    kind="reset"
    version="16.1"
