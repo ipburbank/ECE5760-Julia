@@ -254,6 +254,26 @@ int main(int argc, char *argv[]) {
   VGA_text(1, 2, text_bottom_row);
 
   // =============================================
+  // === PARSE INPUTS ============================
+  static struct option long_options[] =
+    {
+      {"i",  required_argument, NULL, 'i'},
+      {NULL,  0,                 NULL, 0}
+    };
+
+  int opt;
+  int long_index =0;
+  while ((opt = getopt_long_only(argc, argv, "", long_options, &long_index )) != -1) {
+    int newval = (int)strtol(optarg, NULL, 16);
+    switch (opt) {
+    case 'i':
+      *h2p_num_iter_addr = newval;
+      break;
+    default:
+      printf("Invalid Option\n");
+      exit(EXIT_FAILURE);
+    }
+  }
 
   mouse_state.x = 0;
   mouse_state.y = 0;
@@ -266,7 +286,7 @@ int main(int argc, char *argv[]) {
 
   // load position once to avoid rounding errors
   double step = reg27ToFloat(*h2p_step_addr);
-  
+
   double x_position = reg27ToFloat(*h2p_x_0_addr);
   double y_position = reg27ToFloat(*h2p_y_0_addr);
 
