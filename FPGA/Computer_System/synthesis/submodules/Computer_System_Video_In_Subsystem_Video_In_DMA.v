@@ -63,7 +63,7 @@ module Computer_System_Video_In_Subsystem_Video_In_DMA (
  *                           Parameter Declarations                          *
  *****************************************************************************/
 
-parameter DW								= 15; // Frame's datawidth
+parameter DW								= 7; // Frame's datawidth
 parameter EW								= 0; // Frame's empty width
 parameter WIDTH							= 320; // Frame's width in pixels
 parameter HEIGHT							= 240; // Frame's height in lines
@@ -72,13 +72,13 @@ parameter AW								= 16; // Frame's address width
 parameter WW								= 8; // Frame width's address width
 parameter HW								= 7; // Frame height's address width
 
-parameter MDW								= 15; // Avalon master's datawidth
+parameter MDW								= 7; // Avalon master's datawidth
 
 parameter DEFAULT_BUFFER_ADDRESS		= 32'd134217728;
 parameter DEFAULT_BACK_BUF_ADDRESS	= 32'd134217728;
 
 parameter ADDRESSING_BITS				= 16'd2057;
-parameter COLOR_BITS						= 4'd15;
+parameter COLOR_BITS						= 4'd7;
 parameter COLOR_PLANES					= 2'd0;
 
 parameter DEFAULT_DMA_ENABLED			= 1'b0; // 0: OFF or 1: ON
@@ -182,7 +182,7 @@ end
 
 // Output Assignments
 assign master_address		= buffer_start_address +
-								{h_address, w_address, 1'b0};
+								{h_address, w_address};
 
 // Internal Assignments
 

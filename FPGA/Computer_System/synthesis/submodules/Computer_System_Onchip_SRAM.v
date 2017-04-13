@@ -27,11 +27,13 @@ module Computer_System_Onchip_SRAM (
                                       chipselect,
                                       chipselect2,
                                       clk,
+                                      clk2,
                                       clken,
                                       clken2,
-                                      freeze,
                                       reset,
+                                      reset2,
                                       reset_req,
+                                      reset_req2,
                                       write,
                                       write2,
                                       writedata,
@@ -48,46 +50,45 @@ module Computer_System_Onchip_SRAM (
 
   output  [ 31: 0] readdata;
   output  [ 31: 0] readdata2;
-  input   [ 15: 0] address;
-  input   [ 15: 0] address2;
+  input   [  7: 0] address;
+  input   [  7: 0] address2;
   input   [  3: 0] byteenable;
   input   [  3: 0] byteenable2;
   input            chipselect;
   input            chipselect2;
   input            clk;
+  input            clk2;
   input            clken;
   input            clken2;
-  input            freeze;
   input            reset;
+  input            reset2;
   input            reset_req;
+  input            reset_req2;
   input            write;
   input            write2;
   input   [ 31: 0] writedata;
   input   [ 31: 0] writedata2;
 
-
-wire             clocken0;
-wire             not_clken;
-wire             not_clken2;
-wire    [ 31: 0] readdata;
-wire    [ 31: 0] readdata2;
-wire             wren;
-wire             wren2;
-  assign wren = chipselect & write & clken;
-  assign not_clken = ~clken;
-  assign not_clken2 = ~clken2;
-  assign clocken0 = ~reset_req;
-  assign wren2 = chipselect2 & write2 & clken2;
+  wire             clocken0;
+  wire             clocken1;
+  wire    [ 31: 0] readdata;
+  wire    [ 31: 0] readdata2;
+  wire             wren;
+  wire             wren2;
+  assign wren = chipselect & write;
+  assign clocken0 = clken & ~reset_req;
+  assign clocken1 = clken2 & ~reset_req2;
+  assign wren2 = chipselect2 & write2;
   altsyncram the_altsyncram
     (
       .address_a (address),
       .address_b (address2),
-      .addressstall_a (not_clken),
-      .addressstall_b (not_clken2),
       .byteena_a (byteenable),
       .byteena_b (byteenable2),
       .clock0 (clk),
+      .clock1 (clk2),
       .clocken0 (clocken0),
+      .clocken1 (clocken1),
       .data_a (writedata),
       .data_b (writedata2),
       .q_a (readdata),
@@ -96,15 +97,15 @@ wire             wren2;
       .wren_b (wren2)
     );
 
-  defparam the_altsyncram.address_reg_b = "CLOCK0",
+  defparam the_altsyncram.address_reg_b = "CLOCK1",
            the_altsyncram.byte_size = 8,
-           the_altsyncram.byteena_reg_b = "CLOCK0",
-           the_altsyncram.indata_reg_b = "CLOCK0",
-           the_altsyncram.init_file = INIT_FILE,
+           the_altsyncram.byteena_reg_b = "CLOCK1",
+           the_altsyncram.indata_reg_b = "CLOCK1",
+           the_altsyncram.init_file = "UNUSED",
            the_altsyncram.lpm_type = "altsyncram",
-           the_altsyncram.maximum_depth = 65536,
-           the_altsyncram.numwords_a = 65536,
-           the_altsyncram.numwords_b = 65536,
+           the_altsyncram.maximum_depth = 256,
+           the_altsyncram.numwords_a = 256,
+           the_altsyncram.numwords_b = 256,
            the_altsyncram.operation_mode = "BIDIR_DUAL_PORT",
            the_altsyncram.outdata_reg_a = "UNREGISTERED",
            the_altsyncram.outdata_reg_b = "UNREGISTERED",
@@ -114,9 +115,9 @@ wire             wren2;
            the_altsyncram.width_b = 32,
            the_altsyncram.width_byteena_a = 4,
            the_altsyncram.width_byteena_b = 4,
-           the_altsyncram.widthad_a = 16,
-           the_altsyncram.widthad_b = 16,
-           the_altsyncram.wrcontrol_wraddress_reg_b = "CLOCK0";
+           the_altsyncram.widthad_a = 8,
+           the_altsyncram.widthad_b = 8,
+           the_altsyncram.wrcontrol_wraddress_reg_b = "CLOCK1";
 
   //s1, which is an e_avalon_slave
   //s2, which is an e_avalon_slave

@@ -56,7 +56,7 @@ module Computer_System_Video_In_Subsystem_Video_In_Clipper (
  *                           Parameter Declarations                          *
  *****************************************************************************/
 
-parameter DW							= 15; // Frame's data width
+parameter DW							= 7; // Frame's data width
 parameter EW							= 0; // Frame's empty width
 
 parameter WIDTH_IN					= 720; // Incoming frame's width in pixels
@@ -79,7 +79,7 @@ parameter ADD_PIXELS_AT_END		= 0;
 parameter ADD_LINES_AT_START		= 0;
 parameter ADD_LINES_AT_END			= 0;
 
-parameter ADD_DATA					= 16'd0; // Data value for added pixels
+parameter ADD_DATA					= 8'd0; // Data value for added pixels
 
 /*****************************************************************************
  *                             Port Declarations                             *

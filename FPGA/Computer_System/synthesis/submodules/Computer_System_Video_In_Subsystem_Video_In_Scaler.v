@@ -55,7 +55,7 @@ module Computer_System_Video_In_Subsystem_Video_In_Scaler (
  *                           Parameter Declarations                          *
  *****************************************************************************/
 
-parameter DW					= 15; // Frame's Data Width
+parameter DW					= 7; // Frame's Data Width
 parameter EW					= 0; // Frame's Empty Width
 
 parameter WIW					= 9; // Incoming frame's width's address width

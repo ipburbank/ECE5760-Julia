@@ -41,6 +41,7 @@ module Row_Output_FIFO (
 	wrreq,
 	q,
 	rdempty,
+	rdusedw,
 	wrfull);
 
 	input	  aclr;
@@ -51,6 +52,7 @@ module Row_Output_FIFO (
 	input	  wrreq;
 	output	[26:0]  q;
 	output	  rdempty;
+	output	[7:0]  rdusedw;
 	output	  wrfull;
 `ifndef ALTERA_RESERVED_QIS
 // synopsys translate_off
@@ -91,7 +93,7 @@ endmodule
 // Retrieval info: PRIVATE: output_width NUMERIC "27"
 // Retrieval info: PRIVATE: rsEmpty NUMERIC "1"
 // Retrieval info: PRIVATE: rsFull NUMERIC "0"
-// Retrieval info: PRIVATE: rsUsedW NUMERIC "0"
+// Retrieval info: PRIVATE: rsUsedW NUMERIC "1"
 // Retrieval info: PRIVATE: sc_aclr NUMERIC "0"
 // Retrieval info: PRIVATE: sc_sclr NUMERIC "0"
 // Retrieval info: PRIVATE: wsEmpty NUMERIC "0"
@@ -117,6 +119,7 @@ endmodule
 // Retrieval info: USED_PORT: rdclk 0 0 0 0 INPUT NODEFVAL "rdclk"
 // Retrieval info: USED_PORT: rdempty 0 0 0 0 OUTPUT NODEFVAL "rdempty"
 // Retrieval info: USED_PORT: rdreq 0 0 0 0 INPUT NODEFVAL "rdreq"
+// Retrieval info: USED_PORT: rdusedw 0 0 8 0 OUTPUT NODEFVAL "rdusedw[7..0]"
 // Retrieval info: USED_PORT: wrclk 0 0 0 0 INPUT NODEFVAL "wrclk"
 // Retrieval info: USED_PORT: wrfull 0 0 0 0 OUTPUT NODEFVAL "wrfull"
 // Retrieval info: USED_PORT: wrreq 0 0 0 0 INPUT NODEFVAL "wrreq"
@@ -128,6 +131,7 @@ endmodule
 // Retrieval info: CONNECT: @wrreq 0 0 0 0 wrreq 0 0 0 0
 // Retrieval info: CONNECT: q 0 0 27 0 @q 0 0 27 0
 // Retrieval info: CONNECT: rdempty 0 0 0 0 @rdempty 0 0 0 0
+// Retrieval info: CONNECT: rdusedw 0 0 8 0 @rdusedw 0 0 8 0
 // Retrieval info: CONNECT: wrfull 0 0 0 0 @wrfull 0 0 0 0
 // Retrieval info: GEN_FILE: TYPE_NORMAL Row_Output_FIFO.v TRUE
 // Retrieval info: GEN_FILE: TYPE_NORMAL Row_Output_FIFO.inc FALSE

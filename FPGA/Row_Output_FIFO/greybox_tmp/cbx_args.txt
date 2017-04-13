@@ -20,4 +20,5 @@ wrclk
 wrreq
 q
 rdempty
+rdusedw
 wrfull

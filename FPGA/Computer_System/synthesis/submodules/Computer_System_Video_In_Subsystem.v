@@ -27,7 +27,7 @@ module Computer_System_Video_In_Subsystem (
 		output wire [31:0] video_in_dma_master_address,             //          video_in_dma_master.address
 		input  wire        video_in_dma_master_waitrequest,         //                             .waitrequest
 		output wire        video_in_dma_master_write,               //                             .write
-		output wire [15:0] video_in_dma_master_writedata            //                             .writedata
+		output wire [7:0]  video_in_dma_master_writedata            //                             .writedata
 	);
 
 	wire         video_in_chroma_resampler_avalon_chroma_source_valid;         // Video_In_Chroma_Resampler:stream_out_valid -> Edge_Detection_Subsystem:video_stream_sink_valid
@@ -36,7 +36,7 @@ module Computer_System_Video_In_Subsystem (
 	wire         video_in_chroma_resampler_avalon_chroma_source_startofpacket; // Video_In_Chroma_Resampler:stream_out_startofpacket -> Edge_Detection_Subsystem:video_stream_sink_startofpacket
 	wire         video_in_chroma_resampler_avalon_chroma_source_endofpacket;   // Video_In_Chroma_Resampler:stream_out_endofpacket -> Edge_Detection_Subsystem:video_stream_sink_endofpacket
 	wire         video_in_clipper_avalon_clipper_source_valid;                 // Video_In_Clipper:stream_out_valid -> Video_In_Scaler:stream_in_valid
-	wire  [15:0] video_in_clipper_avalon_clipper_source_data;                  // Video_In_Clipper:stream_out_data -> Video_In_Scaler:stream_in_data
+	wire   [7:0] video_in_clipper_avalon_clipper_source_data;                  // Video_In_Clipper:stream_out_data -> Video_In_Scaler:stream_in_data
 	wire         video_in_clipper_avalon_clipper_source_ready;                 // Video_In_Scaler:stream_in_ready -> Video_In_Clipper:stream_out_ready
 	wire         video_in_clipper_avalon_clipper_source_startofpacket;         // Video_In_Clipper:stream_out_startofpacket -> Video_In_Scaler:stream_in_startofpacket
 	wire         video_in_clipper_avalon_clipper_source_endofpacket;           // Video_In_Clipper:stream_out_endofpacket -> Video_In_Scaler:stream_in_endofpacket
@@ -51,12 +51,12 @@ module Computer_System_Video_In_Subsystem (
 	wire         video_in_avalon_decoder_source_startofpacket;                 // Video_In:stream_out_startofpacket -> Video_In_Chroma_Resampler:stream_in_startofpacket
 	wire         video_in_avalon_decoder_source_endofpacket;                   // Video_In:stream_out_endofpacket -> Video_In_Chroma_Resampler:stream_in_endofpacket
 	wire         video_in_rgb_resampler_avalon_rgb_source_valid;               // Video_In_RGB_Resampler:stream_out_valid -> Video_In_Clipper:stream_in_valid
-	wire  [15:0] video_in_rgb_resampler_avalon_rgb_source_data;                // Video_In_RGB_Resampler:stream_out_data -> Video_In_Clipper:stream_in_data
+	wire   [7:0] video_in_rgb_resampler_avalon_rgb_source_data;                // Video_In_RGB_Resampler:stream_out_data -> Video_In_Clipper:stream_in_data
 	wire         video_in_rgb_resampler_avalon_rgb_source_ready;               // Video_In_Clipper:stream_in_ready -> Video_In_RGB_Resampler:stream_out_ready
 	wire         video_in_rgb_resampler_avalon_rgb_source_startofpacket;       // Video_In_RGB_Resampler:stream_out_startofpacket -> Video_In_Clipper:stream_in_startofpacket
 	wire         video_in_rgb_resampler_avalon_rgb_source_endofpacket;         // Video_In_RGB_Resampler:stream_out_endofpacket -> Video_In_Clipper:stream_in_endofpacket
 	wire         video_in_scaler_avalon_scaler_source_valid;                   // Video_In_Scaler:stream_out_valid -> Video_In_DMA:stream_valid
-	wire  [15:0] video_in_scaler_avalon_scaler_source_data;                    // Video_In_Scaler:stream_out_data -> Video_In_DMA:stream_data
+	wire   [7:0] video_in_scaler_avalon_scaler_source_data;                    // Video_In_Scaler:stream_out_data -> Video_In_DMA:stream_data
 	wire         video_in_scaler_avalon_scaler_source_ready;                   // Video_In_DMA:stream_ready -> Video_In_Scaler:stream_out_ready
 	wire         video_in_scaler_avalon_scaler_source_startofpacket;           // Video_In_Scaler:stream_out_startofpacket -> Video_In_DMA:stream_startofpacket
 	wire         video_in_scaler_avalon_scaler_source_endofpacket;             // Video_In_Scaler:stream_out_endofpacket -> Video_In_DMA:stream_endofpacket

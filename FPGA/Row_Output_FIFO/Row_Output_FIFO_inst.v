@@ -7,5 +7,6 @@ Row_Output_FIFO	Row_Output_FIFO_inst (
 	.wrreq ( wrreq_sig ),
 	.q ( q_sig ),
 	.rdempty ( rdempty_sig ),
+	.rdusedw ( rdusedw_sig ),
 	.wrfull ( wrfull_sig )
 	);

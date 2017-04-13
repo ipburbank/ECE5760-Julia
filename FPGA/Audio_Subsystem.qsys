@@ -9,6 +9,14 @@
    categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
+   element $${FILENAME}
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
    element Audio
    {
       datum _sortIndex
@@ -47,7 +55,7 @@
  <parameter name="hideFromIPCatalog" value="false" />
  <parameter name="lockedInterfaceDefinition" value="" />
  <parameter name="maxAdditionalLatency" value="1" />
- <parameter name="projectName">DE1_SoC_Computer.qpf</parameter>
+ <parameter name="projectName" value="" />
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="0" />
  <parameter name="testBenchDutName" value="" />
@@ -95,7 +103,7 @@
    internal="Sys_Clk.clk_in_reset"
    type="reset"
    dir="end" />
- <module name="Audio" kind="altera_up_avalon_audio" version="16.1" enabled="1">
+ <module name="Audio" kind="altera_up_avalon_audio" version="15.0" enabled="1">
   <parameter name="AUTO_CLK_CLOCK_RATE" value="0" />
   <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone V" />
   <parameter name="audio_in" value="true" />
@@ -106,7 +114,7 @@
  <module
    name="Audio_PLL"
    kind="altera_up_avalon_audio_pll"
-   version="16.1"
+   version="15.0"
    enabled="1">
   <parameter name="AUTO_DEVICE" value="5CSEMA5F31C6" />
   <parameter name="AUTO_DEVICE_SPEEDGRADE" value="6" />
@@ -114,16 +122,16 @@
   <parameter name="device_family" value="Cyclone V" />
   <parameter name="gui_refclk" value="50.0" />
  </module>
- <module name="Sys_Clk" kind="clock_source" version="16.1" enabled="1">
+ <module name="Sys_Clk" kind="clock_source" version="15.0" enabled="1">
   <parameter name="clockFrequency" value="50000000" />
   <parameter name="clockFrequencyKnown" value="false" />
   <parameter name="inputClockFrequency" value="0" />
   <parameter name="resetSynchronousEdges" value="NONE" />
  </module>
- <connection kind="clock" version="16.1" start="Sys_Clk.clk" end="Audio.clk" />
+ <connection kind="clock" version="15.0" start="Sys_Clk.clk" end="Audio.clk" />
  <connection
    kind="reset"
-   version="16.1"
+   version="15.0"
    start="Sys_Clk.clk_reset"
    end="Audio.reset" />
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
