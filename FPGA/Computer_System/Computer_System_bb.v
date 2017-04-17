@@ -3,6 +3,7 @@ module Computer_System (
 	av_config_SDAT,
 	av_config_SCLK,
 	clk_100mhz_clk,
+	clk_solver_clk,
 	clock_bridge_0_in_clk_clk,
 	frame_ms_export,
 	hps_io_hps_io_emac1_inst_TX_CLK,
@@ -104,6 +105,7 @@ module Computer_System (
 	inout		av_config_SDAT;
 	output		av_config_SCLK;
 	output		clk_100mhz_clk;
+	output		clk_solver_clk;
 	input		clock_bridge_0_in_clk_clk;
 	input	[31:0]	frame_ms_export;
 	output		hps_io_hps_io_emac1_inst_TX_CLK;

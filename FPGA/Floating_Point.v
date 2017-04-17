@@ -428,7 +428,8 @@ module FpAdd (
 
    wire [53:0] pre_frac_shft, uflow_shift;
    // the shift +1 is because high order bit is not stored, but implied
-   assign uflow_shift = {pre_frac, 17'b0} << (shft_amt); //? shft_amt for overflow
+   //   assign uflow_shift = {pre_frac, 17'b0} << (shft_amt); //? shft_amt for overflow
+   assign uflow_shift = {pre_frac * (6'd1 << (shft_amt)), 17'b0};
    assign pre_frac_shft = uflow_shift << 1;
 
    assign oSum_f = pre_frac_shft[53:36];

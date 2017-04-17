@@ -2,6 +2,7 @@
 		.av_config_SDAT                  (<connected-to-av_config_SDAT>),                  //             av_config.SDAT
 		.av_config_SCLK                  (<connected-to-av_config_SCLK>),                  //                      .SCLK
 		.clk_100mhz_clk                  (<connected-to-clk_100mhz_clk>),                  //            clk_100mhz.clk
+		.clk_solver_clk                  (<connected-to-clk_solver_clk>),                  //            clk_solver.clk
 		.clock_bridge_0_in_clk_clk       (<connected-to-clock_bridge_0_in_clk_clk>),       // clock_bridge_0_in_clk.clk
 		.frame_ms_export                 (<connected-to-frame_ms_export>),                 //              frame_ms.export
 		.hps_io_hps_io_emac1_inst_TX_CLK (<connected-to-hps_io_hps_io_emac1_inst_TX_CLK>), //                hps_io.hps_io_emac1_inst_TX_CLK

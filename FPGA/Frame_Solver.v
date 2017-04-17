@@ -21,7 +21,7 @@ module Frame_Solver (
    //  PARAMETER declarations
    //=======================================================
 
-   localparam NUM_ROWS_SOLVERS = 43;
+   localparam NUM_ROWS_SOLVERS = 45;
 
    //=======================================================
    //  PORT declarations
@@ -67,7 +67,18 @@ module Frame_Solver (
             selected_idx <= output_select_i;
          end
       end
-   end
+   end // always @ (*)
+
+   // make colos nice
+`define color_log1(x) \
+   (x <= 2)   ? 8'd0 : \
+   (x <= 4)   ? 8'd1 : \
+   (x <= 8)   ? 8'd2 : \
+   (x <= 16)  ? 8'd4 : \
+   (x <= 32)  ? 8'd8 : \
+   (x <= 64)  ? 8'd16 : \
+   (x <= 128) ? 8'd32 : \
+   (x <= 512) ? 8'd64 : 8'd128
 
    always @(posedge output_clk) begin
       if (row_solver_return_grant == 0) begin

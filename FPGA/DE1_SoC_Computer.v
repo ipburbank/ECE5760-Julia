@@ -358,7 +358,7 @@ module DE1_SoC_Computer (
    wire                                            reset;
    assign reset = ~KEY[0];
 
-   wire                                            CLOCK_100;
+   wire                                            CLOCK_100, CLOCK_SOLVER;
 
    //=======================================================
    //  Mandelbrot Solver
@@ -384,7 +384,7 @@ module DE1_SoC_Computer (
    wire                                            frame_done_stb;
 
    Frame_Solver mandelbrot_solver (
-                                   .solver_clk         (CLOCK_50),
+                                   .solver_clk         (CLOCK_SOLVER),
                                    .reset              (reset),
                                    .x_0                (init_x),
                                    .x_step             (step),
@@ -404,9 +404,9 @@ module DE1_SoC_Computer (
    reg [15:0]                                      clock_50_to_ms_timer;
    reg [31:0]                                       frame_time_ms_accum, frame_time_ms;
 
-   always @(posedge CLOCK_50) begin
+   always @(posedge CLOCK_SOLVER) begin
       clock_50_to_ms_timer <= clock_50_to_ms_timer + 1;
-      if (clock_50_to_ms_timer > 50000) begin
+      if (clock_50_to_ms_timer > 60000) begin
          clock_50_to_ms_timer <= 0;
          frame_time_ms_accum = frame_time_ms_accum + 1;
       end
@@ -627,6 +627,7 @@ module DE1_SoC_Computer (
                                .num_iter_export                 (max_iterations),
                                .frame_ms_export                 (frame_time_ms),
 
-                               .clk_100mhz_clk                  (CLOCK_100)
+                               .clk_100mhz_clk                  (CLOCK_100),
+                               .clk_solver_clk                  (CLOCK_SOLVER)
                                );
 endmodule // end top level

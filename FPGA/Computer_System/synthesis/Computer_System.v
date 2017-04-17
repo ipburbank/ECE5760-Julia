@@ -7,6 +7,7 @@ module Computer_System (
 		inout  wire        av_config_SDAT,                  //             av_config.SDAT
 		output wire        av_config_SCLK,                  //                      .SCLK
 		output wire        clk_100mhz_clk,                  //            clk_100mhz.clk
+		output wire        clk_solver_clk,                  //            clk_solver.clk
 		input  wire        clock_bridge_0_in_clk_clk,       // clock_bridge_0_in_clk.clk
 		input  wire [31:0] frame_ms_export,                 //              frame_ms.export
 		output wire        hps_io_hps_io_emac1_inst_TX_CLK, //                hps_io.hps_io_emac1_inst_TX_CLK
@@ -106,7 +107,7 @@ module Computer_System (
 		input  wire        vga_pll_ref_reset_reset          //     vga_pll_ref_reset.reset
 	);
 
-	wire          system_pll_reset_source_reset;                                        // System_PLL:reset_source_reset -> [rst_controller:reset_in1, rst_controller_001:reset_in1, rst_controller_002:reset_in0, rst_controller_003:reset_in1]
+	wire          system_pll_reset_source_reset;                                        // System_PLL:reset_source_reset -> [rst_controller:reset_in1, rst_controller_001:reset_in1, rst_controller_002:reset_in0, rst_controller_003:reset_in1, solver_clk:rst]
 	wire    [1:0] arm_a9_hps_h2f_axi_master_awburst;                                    // ARM_A9_HPS:h2f_AWBURST -> mm_interconnect_0:ARM_A9_HPS_h2f_axi_master_awburst
 	wire    [3:0] arm_a9_hps_h2f_axi_master_arlen;                                      // ARM_A9_HPS:h2f_ARLEN -> mm_interconnect_0:ARM_A9_HPS_h2f_axi_master_arlen
 	wire   [15:0] arm_a9_hps_h2f_axi_master_wstrb;                                      // ARM_A9_HPS:h2f_WSTRB -> mm_interconnect_0:ARM_A9_HPS_h2f_axi_master_wstrb
@@ -606,6 +607,13 @@ module Computer_System (
 		.reset2      (rst_controller_reset_out_reset),                    // reset2.reset
 		.reset_req2  (rst_controller_reset_out_reset_req),                //       .reset_req
 		.freeze      (1'b0)                                               // (terminated)
+	);
+
+	Computer_System_solver_clk solver_clk (
+		.refclk   (clk_100mhz_clk),                //  refclk.clk
+		.rst      (system_pll_reset_source_reset), //   reset.reset
+		.outclk_0 (clk_solver_clk),                // outclk0.clk
+		.locked   ()                               // (terminated)
 	);
 
 	Computer_System_step step (
