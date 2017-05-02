@@ -851,7 +851,7 @@ agreement for further details.
 		(text "clk" (rect 213 1635 444 3280)(font "Arial" (color 0 0 0)))
 		(text "vga_pll_ref_reset" (rect 105 1651 312 3315)(font "Arial" (color 128 0 0)(font_size 9)))
 		(text "reset" (rect 213 1675 456 3360)(font "Arial" (color 0 0 0)))
-		(text " system " (rect 589 1696 1226 3402)(font "Arial" ))
+		(text " Computer_System " (rect 540 1696 1182 3402)(font "Arial" ))
 		(line (pt 208 32)(pt 416 32)(line_width 1))
 		(line (pt 416 32)(pt 416 1696)(line_width 1))
 		(line (pt 208 1696)(pt 416 1696)(line_width 1))

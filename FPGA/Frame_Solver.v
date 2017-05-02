@@ -21,7 +21,7 @@ module Frame_Solver (
    //  PARAMETER declarations
    //=======================================================
 
-   localparam NUM_ROWS_SOLVERS = 45;
+   localparam NUM_ROWS_SOLVERS = 1;
 
    //=======================================================
    //  PORT declarations
