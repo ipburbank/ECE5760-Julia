@@ -1,4 +1,6 @@
-module JuliaParser(Exp, juliaParse) where
+{-# LANGUAGE FlexibleContexts #-}
+
+module JuliaParser(Exp(..), juliaParse) where
 
 import Text.Parsec
 import Text.Parsec.Expr
