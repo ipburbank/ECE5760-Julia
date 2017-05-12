@@ -44,10 +44,10 @@ module VLIW (
    // ENABLE LOGIC
    wire                        load_enabled = load_enable_input;
 
+   // Z REG
    reg [26:0]                  z_reg; // value at address 0
 
-   wire                        load_write_enable, neg_write_enable, add_write_enable, mul_write_enable;
-
+   // SRC/DEST translation
    wire [7:0]                  load_dest_translated = load_dest_addr % 256;
 
    wire [7:0]                  neg_src_translated   = neg_src_addr % 256;
@@ -96,7 +96,8 @@ module VLIW (
    //=======================================================
 
    always @(posedge clk) begin
-      if (load_enabled && load_dest_translated == 0) z_reg <= load_value;
+      if (reset) z_reg <= 0;
+      else if (load_enabled && load_dest_translated == 0) z_reg <= load_value;
    end
 
    //=======================================================
@@ -112,7 +113,7 @@ module VLIW (
                                 .clock     (clk),
                                 .data_a    (load_value),
                                 .data_b    (27'b0), // never written
-                                .wren_a    (load_write_enable),
+                                .wren_a    (load_enabled),
                                 .wren_b    (1'b0),
                                 .q_a       (),
                                 .q_b       (ld_out_neg_src)
@@ -123,7 +124,7 @@ module VLIW (
                                 .clock     (clk),
                                 .data_a    (load_value),
                                 .data_b    (27'b0),
-                                .wren_a    (load_write_enable),
+                                .wren_a    (load_enabled),
                                 .wren_b    (1'b0),
                                 .q_a       (),
                                 .q_b       (ld_out_add_src1)
@@ -134,7 +135,7 @@ module VLIW (
                                 .clock     (clk),
                                 .data_a    (load_value),
                                 .data_b    (27'b0),
-                                .wren_a    (load_write_enable),
+                                .wren_a    (load_enabled),
                                 .wren_b    (1'b0),
                                 .q_a       (),
                                 .q_b       (ld_out_add_src2)
@@ -145,7 +146,7 @@ module VLIW (
                                 .clock     (clk),
                                 .data_a    (load_value),
                                 .data_b    (27'b0),
-                                .wren_a    (load_write_enable),
+                                .wren_a    (load_enabled),
                                 .wren_b    (1'b0),
                                 .q_a       (),
                                 .q_b       (ld_out_mul_src1)
@@ -156,7 +157,7 @@ module VLIW (
                                 .clock     (clk),
                                 .data_a    (load_value),
                                 .data_b    (27'b0),
-                                .wren_a    (load_write_enable),
+                                .wren_a    (load_enabled),
                                 .wren_b    (1'b0),
                                 .q_a       (),
                                 .q_b       (ld_out_mul_src2)
