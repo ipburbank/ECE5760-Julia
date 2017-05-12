@@ -356,7 +356,7 @@ module VLIW (
                                  .wren_a    (mul_enabled),
                                  .wren_b    (1'b0),
                                  .q_a       (),
-                                 .q_b       (mul_out_mul_src1)
+                                 .q_b       (mul_out_mul_src2)
                                  );
 
 endmodule
