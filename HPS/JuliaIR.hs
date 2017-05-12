@@ -33,6 +33,8 @@ tick = do n <- get
           put (n+1)
           return n
 
+regFileNumElements = 256
+
 -- make a list of lists
 -- post condition: operation is put in register file on/by the lowest-index cycle
 preschedule :: JuliaParser.Exp -> State Int ([[Instruction]], Register)
@@ -45,29 +47,33 @@ preschedule (JuliaParser.Pos a  ) = do -- a NOP
   prescheduleA <- preschedule a
   return prescheduleA
 preschedule (JuliaParser.Neg a  ) = do
-  returnReg  <- tick
+  returnRegNoOffset  <- tick
   (subSchedule, subReturn) <- preschedule a
-  return ([Neg subReturn returnReg]:subSchedule, returnReg)
+  let returnReg = returnRegNoOffset + (1*regFileNumElements) in
+    return ([Neg subReturn returnReg]:subSchedule, returnReg)
 preschedule (JuliaParser.Add a b) = do
-  returnReg    <- tick
+  returnRegNoOffset    <- tick
   (subA, retA) <- preschedule a
   (subB, retB) <- preschedule b
-  return ([]:[]:[Add retA retB returnReg]:(mergeSchedules subA subB), returnReg)
+  let returnReg = returnRegNoOffset + (2*regFileNumElements) in
+    return ([]:[]:[Add retA retB returnReg]:(mergeSchedules subA subB), returnReg)
 preschedule (JuliaParser.Sub a b) = do
-  returnReg    <- tick
+  returnRegNoOffset    <- tick
   (subA, retA) <- preschedule a
   (subB, retB) <- preschedule b
-  return ([]:[]:[Add retA retB returnReg]:[Neg retB retB]:(mergeSchedules subA subB),
+  let returnReg = returnRegNoOffset + (2*regFileNumElements) in
+    return ([]:[]:[Add retA retB returnReg]:[Neg retB retB]:(mergeSchedules subA subB),
        returnReg)
 preschedule (JuliaParser.Mul a b) = do
-  returnReg    <- tick
+  returnRegNoOffset    <- tick
   (subA, retA) <- preschedule a
   (subB, retB) <- preschedule b
-  return ([Mul retA retB returnReg]:(mergeSchedules subA subB), returnReg)
-preschedule (JuliaParser.Div a b) = do
-  return ([], 0)
-preschedule (JuliaParser.Pow a b) = do
-  return ([], 0)
+  let returnReg = returnRegNoOffset + (3*regFileNumElements) in
+    return ([Mul retA retB returnReg]:(mergeSchedules subA subB), returnReg)
+-- preschedule (JuliaParser.Div a b) = do
+--   return ([], 0)
+-- preschedule (JuliaParser.Pow a b) = do
+--   return ([], 0)
 
 ----------------- FLATTEN SCHEDULE -----------------
 
