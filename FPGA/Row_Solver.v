@@ -87,16 +87,30 @@ module Row_Solver (
    //  Structural coding
    //=======================================================
 
-   Mandelbrot_Pipe mandelbrot_pipe(
-                                   .clk            (solver_clk),
-                                   .reset          (reset),
-                                   .start          (solver_start),
-                                   .C_A_reference  (solver_C_A_reference),
-                                   .C_A_step       (solver_C_A_step),
-                                   .C_A_column     (column_idx),
-                                   .C_B            (solver_C_B),
-                                   .max_iterations (max_iterations),
-                                   .done           (solver_done),
-                                   .num_iterations (output_value)
-                                   );
+   VLIW vliw(
+             .clk            (solver_clk),
+             .reset          (reset),
+             .start          (solver_start),
+             .max_iterations (max_iterations),
+             .done           (solver_done),
+             .num_iterations (output_value),
+
+             .load_enable_input(1'b1),
+             .load_value (27'd123),
+             .load_dest_addr(10'd1),
+
+             .neg_enable_input(1'b1),
+             .neg_src_addr(10'd1),
+             .neg_dest_addr(10'd2),
+
+             .add_enable_input(1'b1),
+             .add_src1_addr(10'd1),
+             .add_src2_addr(10'd258),
+             .add_dest_addr(10'd0),
+
+             .mul_enable_input(1'b1),
+             .mul_src1_addr(10'd1),
+             .mul_src2_addr(10'd1),
+             .mul_dest_addr(10'd5)
+             );
 endmodule

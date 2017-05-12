@@ -970,25 +970,16 @@ set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to *
 set_global_assignment -name TIMEQUEST_MULTICORNER_ANALYSIS ON
 set_global_assignment -name NUM_PARALLEL_PROCESSORS ALL
 set_global_assignment -name FITTER_EFFORT "AUTO FIT"
+set_global_assignment -name VERILOG_FILE VLIW.v
 set_global_assignment -name VERILOG_FILE Row_Output_FIFO/Row_Output_FIFO.v
 set_global_assignment -name VERILOG_FILE Reqs_To_One_Hot.v
 set_global_assignment -name VERILOG_FILE Row_Solver.v
 set_global_assignment -name VERILOG_FILE FP_Complex.v
 set_global_assignment -name VERILOG_FILE Floating_Point.v
-set_global_assignment -name VERILOG_FILE Mandelbrot_Pipe.v
 set_global_assignment -name VERILOG_FILE Frame_Solver.v
 set_global_assignment -name QIP_FILE Computer_System/synthesis/Computer_System.qip
 set_global_assignment -name VERILOG_FILE DE1_SoC_Computer.v
 set_global_assignment -name SDC_FILE DE1_SoC_Computer.sdc
 set_global_assignment -name VERILOG_FILE hex_decoder.v
+set_global_assignment -name QIP_FILE Register_File/Register_File.qip
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
-set_global_assignment -name QIP_FILE FP_ADD_SUB/FP_ADD_SUB.qip
-set_global_assignment -name QIP_FILE FP_CONVERT/FP_CONVERT.qip
-set_global_assignment -name QIP_FILE FIX_TO_FP/FIX_TO_FP.qip
-set_global_assignment -name QIP_FILE FP_ABS/FP_ABS.qip
-set_global_assignment -name QIP_FILE FP_COMPARE/FP_COMPARE.qip
-set_global_assignment -name QIP_FILE FP_DIV/FP_DIV.qip
-set_global_assignment -name QIP_FILE FP_EXP/FP_EXP.qip
-set_global_assignment -name QIP_FILE FP_MULT/FP_MULT.qip
-set_global_assignment -name QIP_FILE FP_FUNCTIONS/FP_COS.qip
-set_global_assignment -name SIP_FILE FP_FUNCTIONS/FP_COS.sip
