@@ -71,29 +71,40 @@ preschedule (JuliaParser.Pow a b) = do
 
 ----------------- FLATTEN SCHEDULE -----------------
 
-data Cycle = Cycle { add  :: Maybe Instruction
+data Cycle = Cycle { load :: Maybe Instruction
+                   , add  :: Maybe Instruction
                    , mul  :: Maybe Instruction
-                   , load :: Maybe Instruction
+                   , neg  :: Maybe Instruction
                    } deriving (Show)
 
-nopCycle = Cycle{ add  = Nothing
+nopCycle = Cycle{ load = Nothing
+                , add  = Nothing
                 , mul  = Nothing
-                , load = Nothing
+                , neg  = Nothing
                 }
 
 instructionToCycle :: Instruction -> Cycle
 instructionToCycle instruction@(Add _ _ _) = Cycle{ add  = Just instruction
                                                   , mul  = Nothing
                                                   , load = Nothing
+                                                  , neg  = Nothing
                                                   }
 instructionToCycle instruction@(Mul _ _ _) = Cycle{ add  = Nothing
                                                   , mul  = Just instruction
                                                   , load = Nothing
+                                                  , neg  = Nothing
                                                   }
 instructionToCycle instruction@(Load _ _)  = Cycle{ add  = Nothing
                                                   , mul  = Nothing
                                                   , load = Just instruction
+                                                  , neg  = Nothing
                                                   }
+instructionToCycle instruction@(Neg _ _)   = Cycle{ add  = Nothing
+                                                  , mul  = Nothing
+                                                  , load = Nothing
+                                                  , neg  = Just instruction
+                                                  }
+
 
 scheduleNext :: ([Cycle], [Instruction]) -> [Instruction] -> ([Cycle], [Instruction])
 scheduleNext (scheduled, unscheduled) newInstructions =
