@@ -79,7 +79,7 @@ module VLIW (
                                           (add_src2_addr < 512) ? neg_out_add_src2 :
                                           (add_src2_addr < 768) ? add_out_add_src2 :
                                                                   mul_out_add_src2 ;
-   reg [26:0]                 add_value_output; // TODO a reg until we wire it to the real adder
+   wire [26:0]                 add_value_output;
 
    wire [7:0]                  mul_src1_translated  = mul_src1_addr % 256;
    wire [7:0]                  mul_src2_translated  = mul_src2_addr % 256;
@@ -183,7 +183,8 @@ module VLIW (
                                 );
 
    // NEG OUTPUT
-   assign neg_value_output = -neg_src; //TODO
+   FpNegate fpnegate(neg_src, neg_value_output);
+
    Register_File neg_out_neg_in (
                                  .address_a (neg_dest_translated),
                                  .address_b (neg_src_translated),
@@ -241,12 +242,7 @@ module VLIW (
                                  );
 
    // ADD OUTPUT
-   // TODO: use real adder
-   reg [26:0] add_value_tmp;
-   always @(posedge clk) begin
-      add_value_tmp    <= add_src1 + add_src2;
-      add_value_output <= add_value_tmp;
-   end
+   FpAdd FpAdder(clk, add_src1, add_src2, add_value_output);
 
    Register_File add_out_neg_in (
                                  .address_a (add_dest_translated),
@@ -305,7 +301,8 @@ module VLIW (
                                  );
 
    // MUL OUT
-   assign mul_value_output = mul_src1 * mul_src2;
+   FpMul FpMultiplier(mul_src1, mul_src2, mul_value_output);
+
    Register_File mul_out_neg_in (
                                  .address_a (mul_dest_translated),
                                  .address_b (neg_src_translated),
