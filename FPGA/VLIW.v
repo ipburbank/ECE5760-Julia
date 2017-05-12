@@ -44,7 +44,9 @@ module VLIW (
    // ENABLE LOGIC
    wire                        load_enabled = load_enable_input;
    wire                        neg_enabled  = neg_enable_input;
-   wire                        add_write_enable, mul_write_enable;
+   wire                        add_enabled_cycle1 = add_enable_input;
+   reg                         add_enabled_cycle2;
+   wire                        mul_write_enable;
 
    // Z REG
    reg [26:0]                  z_reg; // value at address 0
@@ -77,7 +79,7 @@ module VLIW (
                                           (add_src2_addr < 512) ? neg_out_add_src2 :
                                           (add_src2_addr < 768) ? add_out_add_src2 :
                                                                   mul_out_add_src2 ;
-
+   reg [26:0]                 add_value_output; // TODO a reg until we wire it to the real adder
 
    wire [7:0]                  mul_src1_translated  = mul_src1_addr % 256;
    wire [7:0]                  mul_src2_translated  = mul_src2_addr % 256;
@@ -101,8 +103,19 @@ module VLIW (
 
    always @(posedge clk) begin
       if (reset) z_reg <= 0;
-      else if (load_enabled && load_dest_translated == 0) z_reg <= load_value;
-      else if (neg_enabled  && neg_dest_translated == 0 ) z_reg <= neg_value_output;
+      else if (load_enabled       && load_dest_translated == 0) z_reg <= load_value;
+      else if (neg_enabled        && neg_dest_translated  == 0) z_reg <= neg_value_output;
+      else if (add_enabled_cycle2 && add_dest_translated  == 0) z_reg <= add_value_output;
+   end
+
+   // state machine to run the add pipe
+   always @(posedge clk) begin
+      if(reset) begin
+         add_enabled_cycle2 <= 0;
+      end
+      else begin
+         add_enabled_cycle2 <= add_enabled_cycle1;
+      end
    end
 
    //=======================================================
@@ -226,62 +239,69 @@ module VLIW (
                                  .q_b       (neg_out_mul_src2)
                                  );
 
-   // // ADD OUTPUT
-   // Register_File add_out_neg_in (
-   //                               .address_a (),
-   //                               .address_b (),
-   //                               .clock     (),
-   //                               .data_a    (),
-   //                               .data_b    (),
-   //                               .wren_a    (add_write_enable),
-   //                               .wren_b    (1'b0),
-   //                               .q_a       (),
-   //                               .q_b       ()
-   //                               );
-   // Register_File add_out_add1_in (
-   //                               .address_a (),
-   //                               .address_b (),
-   //                               .clock     (),
-   //                               .data_a    (),
-   //                               .data_b    (),
-   //                               .wren_a    (add_write_enable),
-   //                               .wren_b    (1'b0),
-   //                               .q_a       (),
-   //                               .q_b       ()
-   //                               );
-   // Register_File add_out_add2_in (
-   //                               .address_a (),
-   //                               .address_b (),
-   //                               .clock     (),
-   //                               .data_a    (),
-   //                               .data_b    (),
-   //                               .wren_a    (add_write_enable),
-   //                               .wren_b    (1'b0),
-   //                               .q_a       (),
-   //                               .q_b       ()
-   //                               );
-   // Register_File add_out_mul1_in (
-   //                               .address_a (),
-   //                               .address_b (),
-   //                               .clock     (),
-   //                               .data_a    (),
-   //                               .data_b    (),
-   //                               .wren_a    (add_write_enable),
-   //                               .wren_b    (1'b0),
-   //                               .q_a       (),
-   //                               .q_b       ()
-   //                               );
-   // Register_File add_out_mul2_in (
-   //                               .address_a (),
-   //                               .address_b (),
-   //                               .clock     (),
-   //                               .data_a    (),
-   //                               .data_b    (),
-   //                               .wren_a    (add_write_enable),
-   //                               .wren_b    (1'b0),
-   //                               .q_a       (),
-   //                               .q_b       ()
-   //                               );
+   // ADD OUTPUT
+   // TODO: use real adder
+   reg [26:0] add_value_tmp;
+   always @(posedge clk) begin
+      add_value_tmp    <= add_src1 + add_src2;
+      add_value_output <= add_value_tmp;
+   end
+
+   Register_File add_out_neg_in (
+                                 .address_a (add_dest_translated),
+                                 .address_b (neg_src_translated),
+                                 .clock     (clk),
+                                 .data_a    (add_value_output),
+                                 .data_b    (27'b0),
+                                 .wren_a    (add_enabled_cycle2),
+                                 .wren_b    (1'b0),
+                                 .q_a       (),
+                                 .q_b       (add_out_neg_src)
+                                 );
+   Register_File add_out_add1_in (
+                                 .address_a (add_dest_translated),
+                                 .address_b (add_src1_translated),
+                                 .clock     (clk),
+                                 .data_a    (add_value_output),
+                                 .data_b    (27'b0),
+                                 .wren_a    (add_enabled_cycle2),
+                                 .wren_b    (1'b0),
+                                 .q_a       (),
+                                 .q_b       (add_out_add_src1)
+                                 );
+   Register_File add_out_add2_in (
+                                 .address_a (add_dest_translated),
+                                 .address_b (add_src2_translated),
+                                 .clock     (clk),
+                                 .data_a    (add_value_output),
+                                 .data_b    (27'b0),
+                                 .wren_a    (add_enabled_cycle2),
+                                 .wren_b    (1'b0),
+                                 .q_a       (),
+                                 .q_b       (add_out_add_src2)
+                                 );
+   Register_File add_out_mul1_in (
+                                 .address_a (add_dest_translated),
+                                 .address_b (mul_src1_translated),
+                                 .clock     (clk),
+                                 .data_a    (add_value_output),
+                                 .data_b    (27'b0),
+                                 .wren_a    (add_enabled_cycle2),
+                                 .wren_b    (1'b0),
+                                 .q_a       (),
+                                 .q_b       (add_out_mul_src1)
+                                 );
+   Register_File add_out_mul2_in (
+                                 .address_a (add_dest_translated),
+                                 .address_b (mul_src2_translated),
+                                 .clock     (clk),
+                                 .data_a    (add_value_output),
+                                 .data_b    (27'b0),
+                                 .wren_a    (add_enabled_cycle2),
+                                 .wren_b    (1'b0),
+                                 .q_a       (),
+                                 .q_b       (add_out_mul_src2)
+                                 );
 
    // // MUL OUT
    // Register_File mul_out_neg_in (
