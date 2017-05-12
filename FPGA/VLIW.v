@@ -46,7 +46,7 @@ module VLIW (
    wire                        neg_enabled  = neg_enable_input;
    wire                        add_enabled_cycle1 = add_enable_input;
    reg                         add_enabled_cycle2;
-   wire                        mul_write_enable;
+   wire                        mul_enabled  = mul_enable_input;
 
    // Z REG
    reg [26:0]                  z_reg; // value at address 0
@@ -96,6 +96,7 @@ module VLIW (
                                           (mul_src2_addr < 512) ? neg_out_mul_src2 :
                                           (mul_src2_addr < 768) ? add_out_mul_src2 :
                                                                   mul_out_mul_src2 ;
+   wire [26:0]                 mul_value_output;
 
    //=======================================================
    //  State Machines
@@ -303,61 +304,62 @@ module VLIW (
                                  .q_b       (add_out_mul_src2)
                                  );
 
-   // // MUL OUT
-   // Register_File mul_out_neg_in (
-   //                               .address_a (),
-   //                               .address_b (),
-   //                               .clock     (),
-   //                               .data_a    (),
-   //                               .data_b    (),
-   //                               .wren_a    (mul_write_enable),
-   //                               .wren_b    (1'b0),
-   //                               .q_a       (),
-   //                               .q_b       ()
-   //                               );
-   // Register_File mul_out_add1_in (
-   //                               .address_a (),
-   //                               .address_b (),
-   //                               .clock     (),
-   //                               .data_a    (),
-   //                               .data_b    (),
-   //                               .wren_a    (mul_write_enable),
-   //                               .wren_b    (1'b0),
-   //                               .q_a       (),
-   //                               .q_b       ()
-   //                               );
-   // Register_File mul_out_add2_in (
-   //                               .address_a (),
-   //                               .address_b (),
-   //                               .clock     (),
-   //                               .data_a    (),
-   //                               .data_b    (),
-   //                               .wren_a    (mul_write_enable),
-   //                               .wren_b    (1'b0),
-   //                               .q_a       (),
-   //                               .q_b       ()
-   //                               );
-   // Register_File mul_out_mul1_in (
-   //                               .address_a (),
-   //                               .address_b (),
-   //                               .clock     (),
-   //                               .data_a    (),
-   //                               .data_b    (),
-   //                               .wren_a    (mul_write_enable),
-   //                               .wren_b    (1'b0),
-   //                               .q_a       (),
-   //                               .q_b       ()
-   //                               );
-   // Register_File mul_out_mul2_in (
-   //                               .address_a (),
-   //                               .address_b (),
-   //                               .clock     (),
-   //                               .data_a    (),
-   //                               .data_b    (),
-   //                               .wren_a    (mul_write_enable),
-   //                               .wren_b    (1'b0),
-   //                               .q_a       (),
-   //                               .q_b       ()
-   //                               );
+   // MUL OUT
+   assign mul_value_output = mul_src1 * mul_src2;
+   Register_File mul_out_neg_in (
+                                 .address_a (mul_dest_translated),
+                                 .address_b (neg_src_translated),
+                                 .clock     (clk),
+                                 .data_a    (mul_value_output),
+                                 .data_b    (27'b0),
+                                 .wren_a    (mul_enabled),
+                                 .wren_b    (1'b0),
+                                 .q_a       (),
+                                 .q_b       (mul_out_neg_src)
+                                 );
+   Register_File mul_out_add1_in (
+                                 .address_a (mul_dest_translated),
+                                 .address_b (add_src1_translated),
+                                 .clock     (clk),
+                                 .data_a    (mul_value_output),
+                                 .data_b    (27'b0),
+                                 .wren_a    (mul_enabled),
+                                 .wren_b    (1'b0),
+                                 .q_a       (),
+                                 .q_b       (mul_out_add_src1)
+                                 );
+   Register_File mul_out_add2_in (
+                                 .address_a (mul_dest_translated),
+                                 .address_b (add_src1_translated),
+                                 .clock     (clk),
+                                 .data_a    (mul_value_output),
+                                 .data_b    (27'b0),
+                                 .wren_a    (mul_enabled),
+                                 .wren_b    (1'b0),
+                                 .q_a       (),
+                                 .q_b       (mul_out_add_src2)
+                                 );
+   Register_File mul_out_mul1_in (
+                                 .address_a (mul_dest_translated),
+                                 .address_b (mul_src1_translated),
+                                 .clock     (clk),
+                                 .data_a    (mul_value_output),
+                                 .data_b    (27'b0),
+                                 .wren_a    (mul_enabled),
+                                 .wren_b    (1'b0),
+                                 .q_a       (),
+                                 .q_b       (mul_out_mul_src1)
+                                 );
+   Register_File mul_out_mul2_in (
+                                 .address_a (mul_dest_translated),
+                                 .address_b (mul_src2_translated),
+                                 .clock     (clk),
+                                 .data_a    (mul_value_output),
+                                 .data_b    (27'b0),
+                                 .wren_a    (mul_enabled),
+                                 .wren_b    (1'b0),
+                                 .q_a       (),
+                                 .q_b       (mul_out_mul_src1)
+                                 );
 
 endmodule
