@@ -61,15 +61,15 @@ module testbench();
              .neg_src_addr(10'd1),
              .neg_dest_addr(10'd2),
 
-             .add_enable_input(),
-             .add_src1_addr(),
-             .add_src2_addr(),
-             .add_dest_addr(),
+             .add_enable_input(1'b1),
+             .add_src1_addr(10'd1),
+             .add_src2_addr(10'd258),
+             .add_dest_addr(10'd0),
 
-             .mul_enable_input(),
-             .mul_src1_addr(),
-             .mul_src2_addr(),
-             .mul_dest_addr()
+             .mul_enable_input(1'b1),
+             .mul_src1_addr(10'd1),
+             .mul_src2_addr(10'd1),
+             .mul_dest_addr(10'd5)
              );
 
 endmodule
