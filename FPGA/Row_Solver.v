@@ -11,8 +11,9 @@ module Row_Solver (
                    input wire [26:0]  row_y,
                    input wire [8:0]   row_y_idx,
                    input wire [9:0]   max_iterations,
-                   input wire [121:0] vliw_instruction_broadcast,
-                   output wire [9:0]  output_value,
+                   input wire [120:0] vliw_instruction_broadcast,
+                   input wire [7:0]   instruction_number,
+                   output reg [9:0]   output_value,
                    output wire [9:0]  output_column_idx,
                    output reg [8:0]   output_row_idx,
                    output wire        output_stb
@@ -40,10 +41,10 @@ module Row_Solver (
 
    reg [9:0]                   column_idx;
    assign output_column_idx = column_idx;
-   wire [26:0]                 column_idx_fp;
-   Int2Fp col_idx_fp(column_idx, col_idx_fp);
+   wire [26:0]                 col_idx_fp;
+   Int2Fp col_idx_2_fp(column_idx, col_idx_fp);
 
-   wire [120:0]                vliw_instruction;
+   reg [120:0]                 vliw_instruction;
 
    wire [120:0]                instruction_nop = {
                                // ld_en,  val,    dest,
@@ -56,7 +57,7 @@ module Row_Solver (
                                1'd0,      10'd0,  10'd0,  10'd0
                                };
 
-   reg [120:0]                 load_instructions [0:1];
+   reg [120:0]                 load_instructions [0:4];
    always @(*) begin
       load_instructions[0] <= { // load column_idx --> reg3
                                // ld_en,  val,        dest,
@@ -118,13 +119,14 @@ module Row_Solver (
 
    parameter state_reset=0,
      state_load0=1, state_load1=2, state_load2=3,
-     state_load3=4, state_load4=5,
-     state_compute=6;
+     state_load3=4, state_load4=5, state_wait_for_start=6,
+     state_compute=7;
    always @(posedge solver_clk) begin
       if(reset || state == state_reset) begin
          state <= state_reset;
          start_request <= 1;
          vliw_instruction <= instruction_nop;
+         output_value <= 0;
 
          if (start_grant) begin
             state <= state_load0;
@@ -160,11 +162,16 @@ module Row_Solver (
          vliw_instruction <= load_instructions[3];
       end
       else if (state == state_load4) begin
-         state <= state_compute;
+         state <= state_wait_for_start;
          vliw_instruction <= load_instructions[4];
+      end
+      else if (state == state_wait_for_start) begin
+         vliw_instruction <= instruction_nop;
+         if (instruction_number == 0) state <= state_compute;
       end
       else if (state == state_compute) begin
          vliw_instruction <= vliw_instruction_broadcast;
+         if (instruction_number == 0) output_value <= output_value + 1;
          if (solver_done) begin
             // receive results
 
@@ -188,9 +195,7 @@ module Row_Solver (
              .clk            (solver_clk),
              .reset          (reset),
              .start          (solver_start),
-             .max_iterations (max_iterations),
              .done           (solver_done),
-             .num_iterations (output_value),
 
              .load_enable_input (vliw_instruction[0]),
              .load_value        (vliw_instruction[27:1]),

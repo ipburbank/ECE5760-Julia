@@ -12,9 +12,6 @@ module VLIW (
              input wire        start,
              output reg        done,
 
-             input wire [9:0]  max_iterations,
-             output wire [9:0] num_iterations,
-
              // instructions
              input wire        load_enable_input,
              input wire [26:0] load_value,
@@ -43,6 +40,9 @@ module VLIW (
    //=======================================================
    //  REG/WIRE declarations
    //=======================================================
+
+   wire [26:0]                 max_magnitude;
+   wire                        magnitude_geq_max; // set by comparator
 
    // ENABLE LOGIC
    wire                        load_enabled = load_enable_input;
@@ -122,18 +122,29 @@ module VLIW (
    //=======================================================
 
    always @(posedge clk) begin
-      if (reset) begin
+      if (reset | done) begin
          z_regRe <= 0;
          z_regIm <= 0;
+         magnitude_reg <= 0;
       end
       else if (load_enabled       && load_dest_translated == 0) z_regRe <= load_value;
       else if (load_enabled       && load_dest_translated == 1) z_regIm <= load_value;
+      else if (load_enabled       && load_dest_translated == 2) magnitude_reg <= load_value;
+
       else if (neg_enabled        && neg_dest_translated  == 0) z_regRe <= neg_value_output;
       else if (neg_enabled        && neg_dest_translated  == 1) z_regIm <= neg_value_output;
+      else if (neg_enabled        && neg_dest_translated  == 2) magnitude_reg <= neg_value_output;
+
       else if (add_enabled_cycle2 && add_dest_translated  == 0) z_regRe <= add_value_output;
       else if (add_enabled_cycle2 && add_dest_translated  == 1) z_regIm <= add_value_output;
+      else if (add_enabled_cycle2 && add_dest_translated  == 2) magnitude_reg <= add_value_output;
+
       else if (mul_enabled        && mul_dest_translated  == 0) z_regRe <= mul_value_output;
       else if (mul_enabled        && mul_dest_translated  == 1) z_regIm <= mul_value_output;
+      else if (mul_enabled        && mul_dest_translated  == 2) magnitude_reg <= mul_value_output;
+
+      // check the magnitudes
+      if (magnitude_geq_max) done <= 1;
    end
 
    // state machine to run the add pipe
@@ -151,6 +162,10 @@ module VLIW (
    //=======================================================
    //  Structural coding
    //=======================================================
+
+   // Magnitude checks
+   Int2Fp ConvertFP_MaxMagnitude(16'd4, max_magnitude);
+   FpCompare MagnitudeCheck(magnitude_reg, max_magnitude, magnitude_geq_max);
 
    // REG FILES
 
