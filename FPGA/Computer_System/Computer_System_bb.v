@@ -100,7 +100,15 @@ module Computer_System (
 	vga_G,
 	vga_B,
 	vga_pll_ref_clk_clk,
-	vga_pll_ref_reset_reset);	
+	vga_pll_ref_reset_reset,
+	program_mem_clk_bridge_clk,
+	program_memory_address,
+	program_memory_chipselect,
+	program_memory_clken,
+	program_memory_write,
+	program_memory_readdata,
+	program_memory_writedata,
+	program_memory_byteenable);	
 
 	inout		av_config_SDAT;
 	output		av_config_SCLK;
@@ -203,4 +211,12 @@ module Computer_System (
 	output	[7:0]	vga_B;
 	input		vga_pll_ref_clk_clk;
 	input		vga_pll_ref_reset_reset;
+	input		program_mem_clk_bridge_clk;
+	input	[6:0]	program_memory_address;
+	input		program_memory_chipselect;
+	input		program_memory_clken;
+	input		program_memory_write;
+	output	[127:0]	program_memory_readdata;
+	input	[127:0]	program_memory_writedata;
+	input	[15:0]	program_memory_byteenable;
 endmodule
