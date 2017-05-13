@@ -58,9 +58,9 @@ module Row_Solver (
 
    reg [120:0]                 load_instructions [0:1];
    always @(*) begin
-      load_instructions[0] <= { // load column_idx --> reg2
+      load_instructions[0] <= { // load column_idx --> reg3
                                // ld_en,  val,        dest,
-                               1'd1,      col_idx_fp, 10'd2,
+                               1'd1,      col_idx_fp, 10'd3,
                                // neg_en, src,    dest,
                                1'd0,      10'd0,  10'd0,
                                // add_en, src1,   src2,   dest,
@@ -68,9 +68,9 @@ module Row_Solver (
                                // mul_en, src1,   src2,   dest
                                1'd0,      10'd0,  10'd0,  10'd0
                                };
-      load_instructions[1] <= { // load step --> reg3
+      load_instructions[1] <= { // load step --> reg4
                                // ld_en,  val,             dest,
-                               1'd1,      solver_C_A_step, 10'd3,
+                               1'd1,      solver_C_A_step, 10'd4,
                                // neg_en, src,    dest,
                                1'd0,      10'd0,  10'd0,
                                // add_en, src1,   src2,   dest,
@@ -78,15 +78,15 @@ module Row_Solver (
                                // mul_en, src1,   src2,   dest
                                1'd0,      10'd0,  10'd0,  10'd0
                                };
-      load_instructions[2] <= { // load reference --> reg4, mult step*col_idx
+      load_instructions[2] <= { // load reference --> reg5, mult step*col_idx
                                // ld_en,  val,                  dest,
-                               1'd1,      solver_C_A_reference, 10'd4,
+                               1'd1,      solver_C_A_reference, 10'd5,
                                // neg_en, src,    dest,
                                1'd0,      10'd0,  10'd0,
                                // add_en, src1,   src2,   dest,
                                1'd0,      10'd0,  10'd0,  10'd0,
                                // mul_en, src1,   src2,   dest
-                               1'd1,      10'd2,  10'd3,  10'd5
+                               1'd1,      10'd3,  10'd4,  10'd6
                                };
       load_instructions[3] <= { // add reference + offset -> reg1
                                // ld_en,  val,    dest,
@@ -94,7 +94,7 @@ module Row_Solver (
                                // neg_en, src,    dest,
                                1'd0,      10'd0,  10'd0,
                                // add_en, src1,   src2,   dest,
-                               1'd1,      10'd4,  10'd5,  10'd1,
+                               1'd1,      10'd5,  10'd6,  10'd1,
                                // mul_en, src1,   src2,   dest
                                1'd0,      10'd0,  10'd0,  10'd0
                                };

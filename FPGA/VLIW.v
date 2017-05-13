@@ -55,6 +55,10 @@ module VLIW (
    reg [26:0]                  z_regRe; // value at address 0
    reg [26:0]                  z_regIm; // value at address 1
 
+   // Magnitude of current iteration. When written with a sufficiently large
+   // value the processor will return done.
+   reg [26:0]                  magnitude_reg;
+
    // SRC/DEST translation
    wire [7:0]                  load_dest_translated = load_dest_addr % 256;
 
@@ -63,6 +67,7 @@ module VLIW (
    wire [26:0]                 ld_out_neg_src, neg_out_neg_src, add_out_neg_src, mul_out_neg_src;
    wire [26:0]                 neg_src = (neg_src_translated == 0) ? z_regRe    :
                                          (neg_src_translated == 1) ? z_regIm    :
+                                         (neg_src_translated == 2) ? magnitude_reg :
                                          (neg_src_addr < 256) ? ld_out_neg_src  :
                                          (neg_src_addr < 512) ? neg_out_neg_src :
                                          (neg_src_addr < 768) ? add_out_neg_src :
@@ -76,6 +81,7 @@ module VLIW (
    wire [26:0]                 ld_out_add_src1, neg_out_add_src1, add_out_add_src1, mul_out_add_src1;
    wire [26:0]                 add_src1 = (add_src1_translated == 0) ? z_regRe     :
                                           (add_src1_translated == 1) ? z_regIm     :
+                                          (add_src1_translated == 2) ? magnitude_reg :
                                           (add_src1_addr < 256) ? ld_out_add_src1  :
                                           (add_src1_addr < 512) ? neg_out_add_src1 :
                                           (add_src1_addr < 768) ? add_out_add_src1 :
@@ -83,6 +89,7 @@ module VLIW (
    wire [26:0]                 ld_out_add_src2, neg_out_add_src2, add_out_add_src2, mul_out_add_src2;
    wire [26:0]                 add_src2 = (add_src2_translated == 0) ? z_regRe     :
                                           (add_src2_translated == 1) ? z_regIm     :
+                                          (add_src2_translated == 2) ? magnitude_reg :
                                           (add_src2_addr < 256) ?  ld_out_add_src2 :
                                           (add_src2_addr < 512) ? neg_out_add_src2 :
                                           (add_src2_addr < 768) ? add_out_add_src2 :
@@ -95,6 +102,7 @@ module VLIW (
    wire [26:0]                 ld_out_mul_src1, neg_out_mul_src1, add_out_mul_src1, mul_out_mul_src1;
    wire [26:0]                 mul_src1 = (mul_src1_translated == 0) ? z_regRe     :
                                           (mul_src1_translated == 1) ? z_regIm     :
+                                          (mul_src1_translated == 2) ? magnitude_reg :
                                           (mul_src1_addr < 256) ? ld_out_mul_src1  :
                                           (mul_src1_addr < 512) ? neg_out_mul_src1 :
                                           (mul_src1_addr < 768) ? add_out_mul_src1 :
@@ -102,6 +110,7 @@ module VLIW (
    wire [26:0]                 ld_out_mul_src2, neg_out_mul_src2, add_out_mul_src2, mul_out_mul_src2;
    wire [26:0]                 mul_src2 = (mul_src2_translated == 0) ? z_regRe     :
                                           (mul_src2_translated == 1) ? z_regIm     :
+                                          (mul_src2_translated == 2) ? magnitude_reg :
                                           (mul_src2_addr < 256) ? ld_out_mul_src2  :
                                           (mul_src2_addr < 512) ? neg_out_mul_src2 :
                                           (mul_src2_addr < 768) ? add_out_mul_src2 :

@@ -6,7 +6,8 @@ import qualified JuliaParser
 import Data.UUID
 
 type Register = Int -- 0 is 'z'
-zReg = 1 :: Register
+zReg         = 0 :: Register
+magnitudeReg = 2 :: Register
 
 data Instruction =
   --     SRC1     SRC2     DEST
@@ -33,7 +34,7 @@ tick = do n <- get
           put (n+1)
           return n
 
-regFileNumElements = 256
+regFileNumElements = 128 -- 256 / 2, 256 regs times two for complex
 
 -- make a list of lists
 -- post condition: operation is put in register file on/by the lowest-index cycle
@@ -127,4 +128,4 @@ flattenSchedule prescheduled =
 
 schedule :: JuliaParser.Exp -> [Cycle]
 schedule input = flattenSchedule prescheduled
-  where (prescheduled, _) = evalState (preschedule input) zReg -- start at reg 1
+  where (prescheduled, _) = evalState (preschedule input) 3 -- start at reg 3
