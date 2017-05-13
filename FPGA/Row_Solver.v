@@ -114,11 +114,12 @@ module Row_Solver (
    //  State Machines
    //=======================================================
 
-   reg [2:0]                  state;
+   reg [3:0]                  state;
 
    parameter state_reset=0,
-     state_load0, state_load1, state_load2, state_load3, state_load4,
-     state_compute=1;
+     state_load0=1, state_load1=2, state_load2=3,
+     state_load3=4, state_load4=5,
+     state_compute=6;
    always @(posedge solver_clk) begin
       if(reset || state == state_reset) begin
          state <= state_reset;
