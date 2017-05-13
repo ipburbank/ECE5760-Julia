@@ -6,7 +6,8 @@ import qualified JuliaParser
 import Data.UUID
 
 type Register = Int -- 0 is 'z'
-zReg         = 0 :: Register
+zRegRe       = 0 :: Register
+zRegIm       = 1 :: Register
 magnitudeReg = 2 :: Register
 
 data Instruction =
@@ -25,8 +26,14 @@ data Instruction =
 emptySchedule :: [[Instruction]]
 emptySchedule = [] -- repeat([])
 
+-- taken without shame from: http://stackoverflow.com/questions/22403029/how-to-zip-lists-with-different-length
+zipWithPadding :: [[Instruction]] -> [[Instruction]] -> [([Instruction],[Instruction])]
+zipWithPadding (x:xs) (y:ys) = (x,y) : zipWithPadding xs ys
+zipWithPadding []     ys     = zip (repeat []) ys
+zipWithPadding xs     []     = zip xs (repeat [])
+
 mergeSchedules :: [[Instruction]] -> [[Instruction]] -> [[Instruction]]
-mergeSchedules a b = map (\(l, r) ->  concat [l,r]) $ zip a b
+mergeSchedules a b = map (\(l, r) ->  concat [l,r]) $ zipWithPadding a b
 
 -- for getting register numbers
 tick :: State Int Int
@@ -36,41 +43,73 @@ tick = do n <- get
 
 regFileNumElements = 128 -- 256 / 2, 256 regs times two for complex
 
+type Complex = (Register, Register)
+
 -- make a list of lists
 -- post condition: operation is put in register file on/by the lowest-index cycle
-preschedule :: JuliaParser.Exp -> State Int ([[Instruction]], Register)
+-- return the locations of the real and complex parts
+preschedule :: JuliaParser.Exp -> State Int ([[Instruction]], Complex)
 preschedule (JuliaParser.Num x  ) = do
-  returnReg <- tick
-  return ([Load x returnReg]:emptySchedule, returnReg)
+  returnRegRe <- tick
+  returnRegIm <- tick
+  return ([Load 0 returnRegIm]:[Load x returnRegRe]:emptySchedule,
+          (returnRegRe, returnRegIm))
+preschedule (JuliaParser.Cpx (JuliaParser.Num re) (JuliaParser.Num im)) = do
+  returnRegRe <- tick
+  returnRegIm <- tick
+  return ([Load im returnRegIm]:[Load re returnRegRe]:emptySchedule,
+          (returnRegRe, returnRegIm))
 preschedule (JuliaParser.Var "z") = do
-  return ([]:emptySchedule, zReg) -- no additional cycles TODO: verify
+  return (emptySchedule, (zRegRe, zRegIm)) -- no additional cycles TODO: verify
 preschedule (JuliaParser.Pos a  ) = do -- a NOP
   prescheduleA <- preschedule a
   return prescheduleA
 preschedule (JuliaParser.Neg a  ) = do
-  returnRegNoOffset  <- tick
-  (subSchedule, subReturn) <- preschedule a
-  let returnReg = returnRegNoOffset + (1*regFileNumElements) in
-    return ([Neg subReturn returnReg]:subSchedule, returnReg)
+  returnRegReNoOffset  <- tick
+  returnRegImNoOffset  <- tick
+  (subSchedule, (subReturnRe, subReturnIm)) <- preschedule a
+  let returnRegRe = returnRegReNoOffset + (1*regFileNumElements) in
+    let returnRegIm = returnRegImNoOffset + (1*regFileNumElements) in
+      return ([Neg subReturnIm returnRegIm]:[Neg subReturnRe returnRegRe]:subSchedule,
+              (returnRegRe, returnRegIm))
 preschedule (JuliaParser.Add a b) = do
-  returnRegNoOffset    <- tick
-  (subA, retA) <- preschedule a
-  (subB, retB) <- preschedule b
-  let returnReg = returnRegNoOffset + (2*regFileNumElements) in
-    return ([]:[]:[Add retA retB returnReg]:(mergeSchedules subA subB), returnReg)
+  returnRegReNoOffset    <- tick
+  returnRegImNoOffset    <- tick
+  (subA, (retARe, retAIm)) <- preschedule a
+  (subB, (retBRe, retBIm)) <- preschedule b
+  let returnRegRe = returnRegReNoOffset + (2*regFileNumElements) in
+    let returnRegIm = returnRegImNoOffset + (2*regFileNumElements) in
+    return ([]:[]:[Add retAIm retBIm returnRegIm]:[Add retARe retBRe returnRegRe]:
+            (mergeSchedules subA subB), (returnRegRe, returnRegIm))
 preschedule (JuliaParser.Sub a b) = do
-  returnRegNoOffset    <- tick
-  (subA, retA) <- preschedule a
-  (subB, retB) <- preschedule b
-  let returnReg = returnRegNoOffset + (2*regFileNumElements) in
-    return ([]:[]:[Add retA retB returnReg]:[Neg retB retB]:(mergeSchedules subA subB),
-       returnReg)
-preschedule (JuliaParser.Mul a b) = do
-  returnRegNoOffset    <- tick
-  (subA, retA) <- preschedule a
-  (subB, retB) <- preschedule b
-  let returnReg = returnRegNoOffset + (3*regFileNumElements) in
-    return ([Mul retA retB returnReg]:(mergeSchedules subA subB), returnReg)
+  returnRegReNoOffset    <- tick
+  returnRegImNoOffset    <- tick
+  negTmpNoOffset         <- tick
+  (subA, (retARe, retAIm)) <- preschedule a
+  (subB, (retBRe, retBIm)) <- preschedule b
+  let returnRegRe = returnRegReNoOffset + (2*regFileNumElements) in
+    let returnRegIm = returnRegImNoOffset + (2*regFileNumElements) in
+      let negTmp = negTmpNoOffset + (1*regFileNumElements) in
+    return ([]:[]:[Add retAIm negTmp returnRegIm]:[Neg retBIm negTmp]:
+            [Add retARe negTmp returnRegRe]:[Neg retBRe negTmp]:(mergeSchedules subA subB),
+            (returnRegRe, returnRegIm))
+preschedule (JuliaParser.Mul l r) = do
+  returnRegReNoOffset    <- tick
+  returnRegImNoOffset    <- tick
+  mulTmp1NoOffset        <- tick
+  mulTmp2NoOffset        <- tick
+  negTmpNoOffset         <- tick
+  (subA, (a, b)) <- preschedule r
+  (subB, (c, d)) <- preschedule l
+  let returnRegRe = returnRegReNoOffset + (2*regFileNumElements) in
+    let returnRegIm = returnRegImNoOffset + (2*regFileNumElements) in
+      let mulTmp1 = mulTmp1NoOffset + (3*regFileNumElements) in
+        let mulTmp2 = mulTmp2NoOffset + (3*regFileNumElements) in
+          let negTmp = negTmpNoOffset + (1*regFileNumElements) in
+            return ([]:[]:[Add mulTmp1 mulTmp2 returnRegIm]:[Mul b c mulTmp2]:[Mul a d mulTmp1]:
+                    [Add negTmp mulTmp1 returnRegRe]:[Neg mulTmp2 negTmp]:[Mul b d mulTmp2]:[Mul a c mulTmp1]:
+                    (mergeSchedules subA subB),
+                    (returnRegRe, returnRegIm))
 -- preschedule (JuliaParser.Div a b) = do
 --   return ([], 0)
 -- preschedule (JuliaParser.Pow a b) = do
