@@ -361,6 +361,19 @@ module DE1_SoC_Computer (
    wire                                            CLOCK_100, CLOCK_SOLVER;
 
    //=======================================================
+   //  Program Memory
+   //=======================================================
+
+   reg [7:0]                                       program_memory_address;
+   wire [127:0]                                    vliw_instruction_broadcast_padded;
+   wire [120:0]                                    vliw_instruction_broadcast = vliw_instruction_broadcast_padded[120:0];
+
+   always @(posedge CLOCK_SOLVER) begin
+      if (reset) program_memory_address <= 0;
+      else program_memory_address <= program_memory_address + 1;
+   end
+
+   //=======================================================
    //  Mandelbrot Solver
    //=======================================================
 
@@ -369,13 +382,6 @@ module DE1_SoC_Computer (
 
    wire [26:0]                                     init_x, step, init_y;
    wire [9:0]                                      max_iterations;
-
-   // Int2Fp ConvertFP_C_A_ref(-16'sd2, C_A_reference);
-
-   // Int2Fp ConvertFP_C_A_step(16'sd1, C_A_step_num);
-   // FpShift SHAstep(C_A_step_num, -8'sd8, C_A_step);
-
-   // Int2Fp ConvertFP_C_B(-16'sd1, C_B);
 
    wire [9:0]                                      mandelbrot_pixel_x;
    wire [8:0]                                      mandelbrot_pixel_y;
@@ -391,6 +397,8 @@ module DE1_SoC_Computer (
                                    .y_0                (init_y),
                                    .y_step             (step),
                                    .max_iterations     (max_iterations),
+                                   .vliw_instruction_broadcast (vliw_instruction_broadcast),
+                                   .instruction_number (program_memory_address),
                                    .output_clk         (CLOCK_100),
                                    .output_pixel_x     (mandelbrot_pixel_x),
                                    .output_pixel_y     (mandelbrot_pixel_y),
@@ -628,6 +636,16 @@ module DE1_SoC_Computer (
                                .frame_ms_export                 (frame_time_ms),
 
                                .clk_100mhz_clk                  (CLOCK_100),
-                               .clk_solver_clk                  (CLOCK_SOLVER)
+                               .clk_solver_clk                  (CLOCK_SOLVER),
+
+                               // instruction memory
+                               .program_mem_clk_bridge_clk      (CLOCK_SOLVER),
+                               .program_memory_address          (program_memory_address),
+                               .program_memory_chipselect       (1'b1),
+                               .program_memory_clken            (1'b1),
+                               .program_memory_write            (1'b0),
+                               .program_memory_readdata         (vliw_instruction_broadcast_padded),
+                               .program_memory_writedata        (),//we don't write
+                               .program_memory_byteenable       (-1)
                                );
 endmodule // end top level

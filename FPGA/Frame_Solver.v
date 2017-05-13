@@ -2,19 +2,21 @@
  */
 
 module Frame_Solver (
-                     input wire        solver_clk,
-                     input wire        reset,
-                     input wire [26:0] x_0,
-                     input wire [26:0] x_step,
-                     input wire [26:0] y_0,
-                     input wire [26:0] y_step,
-                     input wire [9:0]  max_iterations,
-                     input wire        output_clk,
-                     output reg [9:0]  output_pixel_x,
-                     output reg [8:0]  output_pixel_y,
-                     output reg [7:0]  output_pixel_color,
-                     output reg        output_pixel_stb,
-                     output reg        frame_done_stb
+                     input wire         solver_clk,
+                     input wire         reset,
+                     input wire [26:0]  x_0,
+                     input wire [26:0]  x_step,
+                     input wire [26:0]  y_0,
+                     input wire [26:0]  y_step,
+                     input wire [9:0]   max_iterations,
+                     input wire [121:0] vliw_instruction_broadcast,
+                     input wire [7:0]   instruction_number,
+                     input wire         output_clk,
+                     output reg [9:0]   output_pixel_x,
+                     output reg [8:0]   output_pixel_y,
+                     output reg [7:0]   output_pixel_color,
+                     output reg         output_pixel_stb,
+                     output reg         frame_done_stb
                      );
 
    //=======================================================
@@ -142,6 +144,8 @@ module Frame_Solver (
                            .row_y             (row_next_y_value),
                            .row_y_idx         (row_next_y_idx),
                            .max_iterations    (max_iterations),
+                           .vliw_instruction_broadcast (vliw_instruction_broadcast),
+                           .instruction_number (instruction_number),
                            .output_value      (solver_output_value),
                            .output_column_idx (solver_output_column_idx),
                            .output_row_idx    (solver_output_row_idx),
