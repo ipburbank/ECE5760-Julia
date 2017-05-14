@@ -369,7 +369,7 @@ module DE1_SoC_Computer (
    wire [120:0]                                    vliw_instruction_broadcast = vliw_instruction_broadcast_padded[120:0];
 
    always @(posedge CLOCK_SOLVER) begin
-      if (reset) program_memory_address <= 0;
+      if (reset || (program_memory_address == 5)) program_memory_address <= 0;
       else program_memory_address <= program_memory_address + 1;
    end
 
