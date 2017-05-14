@@ -144,6 +144,7 @@ module VLIW (
       else if (mul_enabled        && mul_dest_translated  == 2) magnitude_reg <= mul_value_output;
 
       // check the magnitudes
+      done <= 0; // strobed only
       if (magnitude_geq_max) done <= 1;
    end
 
@@ -164,7 +165,7 @@ module VLIW (
    //=======================================================
 
    // Magnitude checks
-   Int2Fp ConvertFP_MaxMagnitude(16'd4, max_magnitude);
+   Int2Fp ConvertFP_MaxMagnitude(16'd300, max_magnitude);
    FpCompare MagnitudeCheck(magnitude_reg, max_magnitude, magnitude_geq_max);
 
    // REG FILES

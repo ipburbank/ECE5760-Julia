@@ -16,7 +16,7 @@ module Row_Solver (
                    output reg [9:0]   output_value,
                    output wire [9:0]  output_column_idx,
                    output reg [8:0]   output_row_idx,
-                   output wire        output_stb
+                   output reg         output_stb
                    );
 
    //=======================================================
@@ -33,11 +33,12 @@ module Row_Solver (
    //  REG/WIRE declarations
    //=======================================================
 
+   reg                         solver_reset;
    reg                         solver_start;
    reg [26:0]                  solver_C_A_reference, solver_C_A_step,
                                solver_C_B;
    wire                        solver_done;
-   assign output_stb = solver_done;
+   //assign output_stb = solver_done;
 
    reg [9:0]                   column_idx;
    assign output_column_idx = column_idx;
@@ -56,6 +57,18 @@ module Row_Solver (
                                // mul_en, src1,   src2,   dest
                                1'd0,      10'd0,  10'd0,  10'd0
                                };
+
+   wire [120:0]                instruction_end = {
+                               // ld_en,  val,        dest,
+                               1'd1,      col_idx_fp, 10'd2,
+                               // neg_en, src,    dest,
+                               1'd0,      10'd0,  10'd0,
+                               // add_en, src1,   src2,   dest,
+                               1'd0,      10'd0,  10'd0,  10'd0,
+                               // mul_en, src1,   src2,   dest
+                               1'd0,      10'd0,  10'd0,  10'd0
+                               };
+
 
    reg [120:0]                 load_instructions [0:4];
    always @(*) begin
@@ -122,11 +135,15 @@ module Row_Solver (
      state_load3=4, state_load4=5, state_wait_for_start=6,
      state_compute=7;
    always @(posedge solver_clk) begin
+      output_stb <= 0;
+      solver_reset <= 0;
+
       if(reset || state == state_reset) begin
          state <= state_reset;
          start_request <= 1;
          vliw_instruction <= instruction_nop;
          output_value <= 0;
+         solver_reset <= 1;
 
          if (start_grant) begin
             state <= state_load0;
@@ -167,12 +184,16 @@ module Row_Solver (
       end
       else if (state == state_wait_for_start) begin
          vliw_instruction <= instruction_nop;
-         if (instruction_number == 0) state <= state_compute;
+         if (instruction_number == 0) begin
+            state <= state_compute;
+            output_value <= 0;
+         end
       end
       else if (state == state_compute) begin
-         vliw_instruction <= vliw_instruction_broadcast;
+         vliw_instruction <= instruction_end; // TODO: vliw_instruction_broadcast;
          if (instruction_number == 0) output_value <= output_value + 1;
-         if (solver_done) begin
+         if (solver_done || output_value > max_iterations) begin
+            output_stb <= 1;
             // receive results
 
             // start on new results
@@ -180,6 +201,8 @@ module Row_Solver (
                state <= state_reset;
             end
             else begin
+               state <= state_load0;
+
                column_idx <= column_idx + 1;
                solver_start <= 1;
             end
@@ -193,26 +216,26 @@ module Row_Solver (
 
    VLIW vliw(
              .clk            (solver_clk),
-             .reset          (reset),
+             .reset          (solver_reset),
              .start          (solver_start),
              .done           (solver_done),
 
-             .load_enable_input (vliw_instruction[0]),
-             .load_value        (vliw_instruction[27:1]),
-             .load_dest_addr    (vliw_instruction[37:28]),
+             .load_enable_input (vliw_instruction[120]),
+             .load_value        (vliw_instruction[119:93]),
+             .load_dest_addr    (vliw_instruction[92:83]),
 
-             .neg_enable_input  (vliw_instruction[38]),
-             .neg_src_addr      (vliw_instruction[48:39]),
-             .neg_dest_addr     (vliw_instruction[58:49]),
+             .neg_enable_input  (vliw_instruction[82]),
+             .neg_src_addr      (vliw_instruction[81:72]),
+             .neg_dest_addr     (vliw_instruction[71:62]),
 
-             .add_enable_input  (vliw_instruction[59]),
-             .add_src1_addr     (vliw_instruction[69:60]),
-             .add_src2_addr     (vliw_instruction[79:70]),
-             .add_dest_addr     (vliw_instruction[89:80]),
+             .add_enable_input  (vliw_instruction[61]),
+             .add_src1_addr     (vliw_instruction[60:51]),
+             .add_src2_addr     (vliw_instruction[50:41]),
+             .add_dest_addr     (vliw_instruction[40:31]),
 
-             .mul_enable_input  (vliw_instruction[90]),
-             .mul_src1_addr     (vliw_instruction[100:91]),
-             .mul_src2_addr     (vliw_instruction[110:101]),
-             .mul_dest_addr     (vliw_instruction[120:111])
+             .mul_enable_input  (vliw_instruction[30]),
+             .mul_src1_addr     (vliw_instruction[29:20]),
+             .mul_src2_addr     (vliw_instruction[19:10]),
+             .mul_dest_addr     (vliw_instruction[9:0])
              );
 endmodule
