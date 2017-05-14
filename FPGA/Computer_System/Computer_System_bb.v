@@ -87,6 +87,14 @@ module Computer_System (
 	onchip_vga_buffer_s1_write,
 	onchip_vga_buffer_s1_readdata,
 	onchip_vga_buffer_s1_writedata,
+	program_mem_clk_bridge_clk,
+	program_memory_address,
+	program_memory_chipselect,
+	program_memory_clken,
+	program_memory_write,
+	program_memory_readdata,
+	program_memory_writedata,
+	program_memory_byteenable,
 	sdram_clk_clk,
 	step_export,
 	system_pll_ref_clk_clk,
@@ -101,14 +109,7 @@ module Computer_System (
 	vga_B,
 	vga_pll_ref_clk_clk,
 	vga_pll_ref_reset_reset,
-	program_mem_clk_bridge_clk,
-	program_memory_address,
-	program_memory_chipselect,
-	program_memory_clken,
-	program_memory_write,
-	program_memory_readdata,
-	program_memory_writedata,
-	program_memory_byteenable);	
+	program_num_instrs_export);	
 
 	inout		av_config_SDAT;
 	output		av_config_SCLK;
@@ -197,6 +198,14 @@ module Computer_System (
 	input		onchip_vga_buffer_s1_write;
 	output	[7:0]	onchip_vga_buffer_s1_readdata;
 	input	[7:0]	onchip_vga_buffer_s1_writedata;
+	input		program_mem_clk_bridge_clk;
+	input	[6:0]	program_memory_address;
+	input		program_memory_chipselect;
+	input		program_memory_clken;
+	input		program_memory_write;
+	output	[127:0]	program_memory_readdata;
+	input	[127:0]	program_memory_writedata;
+	input	[15:0]	program_memory_byteenable;
 	output		sdram_clk_clk;
 	output	[26:0]	step_export;
 	input		system_pll_ref_clk_clk;
@@ -211,12 +220,5 @@ module Computer_System (
 	output	[7:0]	vga_B;
 	input		vga_pll_ref_clk_clk;
 	input		vga_pll_ref_reset_reset;
-	input		program_mem_clk_bridge_clk;
-	input	[6:0]	program_memory_address;
-	input		program_memory_chipselect;
-	input		program_memory_clken;
-	input		program_memory_write;
-	output	[127:0]	program_memory_readdata;
-	input	[127:0]	program_memory_writedata;
-	input	[15:0]	program_memory_byteenable;
+	input	[31:0]	program_num_instrs_export;
 endmodule

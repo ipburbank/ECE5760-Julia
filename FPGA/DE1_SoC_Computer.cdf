@@ -6,7 +6,7 @@ JedecChain;
 	P ActionCode(Ign)
 		Device PartName(SOCVHPS) MfrSpec(OpMask(0));
 	P ActionCode(Cfg)
-		Device PartName(5CSEMA5F31) Path("/home/istvan/Documents/School/17SP/ECE5760/ECE5760-lab4/FPGA/") File("DE1_SoC_Computer.sof") MfrSpec(OpMask(1));
+		Device PartName(5CSEMA5F31) Path("/home/istvan/Documents/School/17SP/ECE5760/ECE5760-Julia/FPGA/") File("DE1_SoC_Computer.sof") MfrSpec(OpMask(1));
 
 ChainEnd;
 

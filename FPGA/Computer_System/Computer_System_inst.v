@@ -86,6 +86,14 @@
 		.onchip_vga_buffer_s1_write      (<connected-to-onchip_vga_buffer_s1_write>),      //                       .write
 		.onchip_vga_buffer_s1_readdata   (<connected-to-onchip_vga_buffer_s1_readdata>),   //                       .readdata
 		.onchip_vga_buffer_s1_writedata  (<connected-to-onchip_vga_buffer_s1_writedata>),  //                       .writedata
+		.program_mem_clk_bridge_clk      (<connected-to-program_mem_clk_bridge_clk>),      // program_mem_clk_bridge.clk
+		.program_memory_address          (<connected-to-program_memory_address>),          //         program_memory.address
+		.program_memory_chipselect       (<connected-to-program_memory_chipselect>),       //                       .chipselect
+		.program_memory_clken            (<connected-to-program_memory_clken>),            //                       .clken
+		.program_memory_write            (<connected-to-program_memory_write>),            //                       .write
+		.program_memory_readdata         (<connected-to-program_memory_readdata>),         //                       .readdata
+		.program_memory_writedata        (<connected-to-program_memory_writedata>),        //                       .writedata
+		.program_memory_byteenable       (<connected-to-program_memory_byteenable>),       //                       .byteenable
 		.sdram_clk_clk                   (<connected-to-sdram_clk_clk>),                   //              sdram_clk.clk
 		.step_export                     (<connected-to-step_export>),                     //                   step.export
 		.system_pll_ref_clk_clk          (<connected-to-system_pll_ref_clk_clk>),          //     system_pll_ref_clk.clk
@@ -100,13 +108,6 @@
 		.vga_B                           (<connected-to-vga_B>),                           //                       .B
 		.vga_pll_ref_clk_clk             (<connected-to-vga_pll_ref_clk_clk>),             //        vga_pll_ref_clk.clk
 		.vga_pll_ref_reset_reset         (<connected-to-vga_pll_ref_reset_reset>),         //      vga_pll_ref_reset.reset
-		.program_mem_clk_bridge_clk      (<connected-to-program_mem_clk_bridge_clk>),      // program_mem_clk_bridge.clk
-		.program_memory_address          (<connected-to-program_memory_address>),          //         program_memory.address
-		.program_memory_chipselect       (<connected-to-program_memory_chipselect>),       //                       .chipselect
-		.program_memory_clken            (<connected-to-program_memory_clken>),            //                       .clken
-		.program_memory_write            (<connected-to-program_memory_write>),            //                       .write
-		.program_memory_readdata         (<connected-to-program_memory_readdata>),         //                       .readdata
-		.program_memory_writedata        (<connected-to-program_memory_writedata>),        //                       .writedata
-		.program_memory_byteenable       (<connected-to-program_memory_byteenable>)        //                       .byteenable
+		.program_num_instrs_export       (<connected-to-program_num_instrs_export>)        //     program_num_instrs.export
 	);
 

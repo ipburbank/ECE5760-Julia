@@ -99,6 +99,7 @@ module Computer_System (
 		output wire [127:0] program_memory_readdata,         //                       .readdata
 		input  wire [127:0] program_memory_writedata,        //                       .writedata
 		input  wire [15:0]  program_memory_byteenable,       //                       .byteenable
+		input  wire [31:0]  program_num_instrs_export,       //     program_num_instrs.export
 		output wire         sdram_clk_clk,                   //              sdram_clk.clk
 		output wire [26:0]  step_export,                     //                   step.export
 		input  wire         system_pll_ref_clk_clk,          //     system_pll_ref_clk.clk
@@ -251,6 +252,8 @@ module Computer_System (
 	wire          mm_interconnect_1_program_s1_write;                                   // mm_interconnect_1:program_s1_write -> program:write
 	wire  [127:0] mm_interconnect_1_program_s1_writedata;                               // mm_interconnect_1:program_s1_writedata -> program:writedata
 	wire          mm_interconnect_1_program_s1_clken;                                   // mm_interconnect_1:program_s1_clken -> program:clken
+	wire   [31:0] mm_interconnect_1_program_num_instrs_s1_readdata;                     // program_num_instrs:readdata -> mm_interconnect_1:program_num_instrs_s1_readdata
+	wire    [1:0] mm_interconnect_1_program_num_instrs_s1_address;                      // mm_interconnect_1:program_num_instrs_s1_address -> program_num_instrs:address
 	wire   [31:0] mm_interconnect_1_pixel_dma_addr_translation_slave_readdata;          // Pixel_DMA_Addr_Translation:slave_readdata -> mm_interconnect_1:Pixel_DMA_Addr_Translation_slave_readdata
 	wire          mm_interconnect_1_pixel_dma_addr_translation_slave_waitrequest;       // Pixel_DMA_Addr_Translation:slave_waitrequest -> mm_interconnect_1:Pixel_DMA_Addr_Translation_slave_waitrequest
 	wire    [1:0] mm_interconnect_1_pixel_dma_addr_translation_slave_address;           // mm_interconnect_1:Pixel_DMA_Addr_Translation_slave_address -> Pixel_DMA_Addr_Translation:slave_address
@@ -277,7 +280,7 @@ module Computer_System (
 	wire          rst_controller_reset_out_reset_req;                                   // rst_controller:reset_req -> [onchip_vga_buffer:reset_req2, rst_translator:reset_req_in]
 	wire          arm_a9_hps_h2f_reset_reset;                                           // ARM_A9_HPS:h2f_rst_n -> [rst_controller:reset_in0, rst_controller_001:reset_in0, rst_controller_003:reset_in0, rst_controller_005:reset_in0]
 	wire          rst_controller_001_reset_out_reset;                                   // rst_controller_001:reset_out -> VGA_Subsystem:sys_reset_reset_n
-	wire          rst_controller_002_reset_out_reset;                                   // rst_controller_002:reset_out -> [frame_ms:reset_n, init_x:reset_n, init_y:reset_n, mm_interconnect_1:init_x_reset_reset_bridge_in_reset_reset, num_iter:reset_n, program:reset, rst_translator_001:in_reset, step:reset_n]
+	wire          rst_controller_002_reset_out_reset;                                   // rst_controller_002:reset_out -> [frame_ms:reset_n, init_x:reset_n, init_y:reset_n, mm_interconnect_1:init_x_reset_reset_bridge_in_reset_reset, num_iter:reset_n, program:reset, program_num_instrs:reset_n, rst_translator_001:in_reset, step:reset_n]
 	wire          rst_controller_002_reset_out_reset_req;                               // rst_controller_002:reset_req -> [program:reset_req, rst_translator_001:reset_req_in]
 	wire          rst_controller_003_reset_out_reset;                                   // rst_controller_003:reset_out -> onchip_vga_buffer:reset
 	wire          rst_controller_003_reset_out_reset_req;                               // rst_controller_003:reset_req -> onchip_vga_buffer:reset_req
@@ -651,6 +654,14 @@ module Computer_System (
 		.freeze      (1'b0)                                     // (terminated)
 	);
 
+	Computer_System_frame_ms program_num_instrs (
+		.clk      (clk_100mhz_clk),                                   //                 clk.clk
+		.reset_n  (~rst_controller_002_reset_out_reset),              //               reset.reset_n
+		.address  (mm_interconnect_1_program_num_instrs_s1_address),  //                  s1.address
+		.readdata (mm_interconnect_1_program_num_instrs_s1_readdata), //                    .readdata
+		.in_port  (program_num_instrs_export)                         // external_connection.export
+	);
+
 	Computer_System_solver_clk solver_clk (
 		.refclk   (clk_100mhz_clk),                //  refclk.clk
 		.rst      (system_pll_reset_source_reset), //   reset.reset
@@ -812,6 +823,8 @@ module Computer_System (
 		.program_s1_byteenable                                                    (mm_interconnect_1_program_s1_byteenable),                              //                                                                   .byteenable
 		.program_s1_chipselect                                                    (mm_interconnect_1_program_s1_chipselect),                              //                                                                   .chipselect
 		.program_s1_clken                                                         (mm_interconnect_1_program_s1_clken),                                   //                                                                   .clken
+		.program_num_instrs_s1_address                                            (mm_interconnect_1_program_num_instrs_s1_address),                      //                                              program_num_instrs_s1.address
+		.program_num_instrs_s1_readdata                                           (mm_interconnect_1_program_num_instrs_s1_readdata),                     //                                                                   .readdata
 		.step_s1_address                                                          (mm_interconnect_1_step_s1_address),                                    //                                                            step_s1.address
 		.step_s1_write                                                            (mm_interconnect_1_step_s1_write),                                      //                                                                   .write
 		.step_s1_readdata                                                         (mm_interconnect_1_step_s1_readdata),                                   //                                                                   .readdata

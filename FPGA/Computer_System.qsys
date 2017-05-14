@@ -257,6 +257,27 @@
          type = "int";
       }
    }
+   element program_num_instrs
+   {
+      datum _sortIndex
+      {
+         value = "16";
+         type = "int";
+      }
+   }
+   element program_num_instrs.s1
+   {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "80";
+         type = "String";
+      }
+   }
    element solver_clk
    {
       datum _sortIndex
@@ -356,6 +377,11 @@
    type="clock"
    dir="end" />
  <interface name="program_memory" internal="program.s2" type="avalon" dir="end" />
+ <interface
+   name="program_num_instrs"
+   internal="program_num_instrs.external_connection"
+   type="conduit"
+   dir="end" />
  <interface
    name="sdram_clk"
    internal="System_PLL.sdram_clk"
@@ -1120,6 +1146,24 @@
   <parameter name="EXPLICIT_CLOCK_RATE" value="100000000" />
   <parameter name="NUM_CLOCK_OUTPUTS" value="1" />
  </module>
+ <module
+   name="program_num_instrs"
+   kind="altera_avalon_pio"
+   version="16.1"
+   enabled="1">
+  <parameter name="bitClearingEdgeCapReg" value="false" />
+  <parameter name="bitModifyingOutReg" value="false" />
+  <parameter name="captureEdge" value="false" />
+  <parameter name="clockRate" value="100000000" />
+  <parameter name="direction" value="Input" />
+  <parameter name="edgeType" value="RISING" />
+  <parameter name="generateIRQ" value="false" />
+  <parameter name="irqType" value="LEVEL" />
+  <parameter name="resetValue" value="0" />
+  <parameter name="simDoTestBenchWiring" value="false" />
+  <parameter name="simDrivenValue" value="0" />
+  <parameter name="width" value="32" />
+ </module>
  <module name="solver_clk" kind="altera_pll" version="16.1" enabled="1">
   <parameter name="debug_print_output" value="false" />
   <parameter name="debug_use_rbc_taf_method" value="false" />
@@ -1431,6 +1475,15 @@
    kind="avalon"
    version="16.1"
    start="ARM_A9_HPS.h2f_lw_axi_master"
+   end="program_num_instrs.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0050" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="16.1"
+   start="ARM_A9_HPS.h2f_lw_axi_master"
    end="Pixel_DMA_Addr_Translation.slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x3020" />
@@ -1490,6 +1543,11 @@
    version="16.1"
    start="System_PLL.sys_clk"
    end="frame_ms.clk" />
+ <connection
+   kind="clock"
+   version="16.1"
+   start="System_PLL.sys_clk"
+   end="program_num_instrs.clk" />
  <connection
    kind="clock"
    version="16.1"
@@ -1605,6 +1663,11 @@
    version="16.1"
    start="System_PLL.reset_source"
    end="solver_clk.reset" />
+ <connection
+   kind="reset"
+   version="16.1"
+   start="System_PLL.reset_source"
+   end="program_num_instrs.reset" />
  <connection
    kind="reset"
    version="16.1"
