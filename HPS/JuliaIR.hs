@@ -1,4 +1,4 @@
-module JuliaIR(Register, Instruction, schedule) where
+module JuliaIR(Register, Instruction(..), Cycle(..), schedule) where
 
 import Control.Monad.Trans.State.Lazy
 

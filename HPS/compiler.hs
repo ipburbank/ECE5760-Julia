@@ -1,5 +1,6 @@
 import qualified JuliaParser
 import qualified JuliaIR
+import qualified JuliaAssembler
 
 {-# LANGUAGE ForeignFunctionInterface #-}
 import Foreign
@@ -11,4 +12,4 @@ handleParseError (Right x) = x
 main = do
   line <- getLine
   -- putStrLn $ show $ solution (filter (/=' ') line)
-  putStrLn $ show $ JuliaIR.schedule $ handleParseError $ JuliaParser.juliaParse line
+  putStrLn $ show $ JuliaAssembler.assemble $ JuliaIR.schedule $ handleParseError $ JuliaParser.juliaParse line
