@@ -115,6 +115,12 @@ preschedule (JuliaParser.Mul l r) = do
 -- preschedule (JuliaParser.Pow a b) = do
 --   return ([], 0)
 
+----------------- Save to Z ----------------
+
+saveZMagnitude :: Complex -> [[Instruction]]
+saveZMagnitude (reReg, imReg) = []:[]:[Add 4 5 3]:[Mul 0 0 4, Mul 1 1 5]: -- calc/save magnitude
+                                []:[]:[Add 4 reReg 0, Add 4 imReg 1]:[Load 0 4]:[] -- save z
+
 ----------------- FLATTEN SCHEDULE -----------------
 
 data Cycle = Cycle { load :: Maybe Instruction
@@ -166,5 +172,5 @@ flattenSchedule prescheduled =
 ----------------- SCHEDULE -----------------
 
 schedule :: JuliaParser.Exp -> [Cycle]
-schedule input = flattenSchedule prescheduled
-  where (prescheduled, _) = evalState (preschedule input) 3 -- start at reg 3
+schedule input = flattenSchedule $ (saveZMagnitude zResult) ++ prescheduled
+  where (prescheduled, zResult) = evalState (preschedule input) 10 -- start at reg 10
