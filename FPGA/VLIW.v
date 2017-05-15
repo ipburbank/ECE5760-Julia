@@ -165,7 +165,9 @@ module VLIW (
    //=======================================================
 
    // Magnitude checks
-   Int2Fp ConvertFP_MaxMagnitude(16'd300, max_magnitude);
+   wire [26:0] fpOne;
+   Int2Fp ConvertFP_MaxMagnitude(16'd1, fpOne);
+   FpShift halfer(fpOne, -8'sd1, max_magnitude);
    FpCompare MagnitudeCheck(magnitude_reg, max_magnitude, magnitude_geq_max);
 
    // REG FILES
