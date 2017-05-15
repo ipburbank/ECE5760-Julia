@@ -60,13 +60,13 @@ module Row_Solver (
 
    wire [120:0]                instruction_end = {
                                // ld_en,  val,        dest,
-                               1'd1,      col_idx_fp, 10'd2,
+                               1'd0,      solver_C_B, 10'd0,
                                // neg_en, src,    dest,
                                1'd0,      10'd0,  10'd0,
                                // add_en, src1,   src2,   dest,
                                1'd0,      10'd0,  10'd0,  10'd0,
                                // mul_en, src1,   src2,   dest
-                               1'd0,      10'd0,  10'd0,  10'd0
+                               1'd1,      10'd0,  10'd1,  10'd2
                                };
 
 
@@ -92,7 +92,7 @@ module Row_Solver (
                                // mul_en, src1,   src2,   dest
                                1'd0,      10'd0,  10'd0,  10'd0
                                };
-      load_instructions[2] <= { // load reference --> reg5, mult step*col_idx
+      load_instructions[2] <= { // load reference --> reg5, mult step*col_idx->800
                                // ld_en,  val,                  dest,
                                1'd1,      solver_C_A_reference, 10'd5,
                                // neg_en, src,    dest,
@@ -100,25 +100,25 @@ module Row_Solver (
                                // add_en, src1,   src2,   dest,
                                1'd0,      10'd0,  10'd0,  10'd0,
                                // mul_en, src1,   src2,   dest
-                               1'd1,      10'd3,  10'd4,  10'd6
+                               1'd1,      10'd3,  10'd4,  10'd800
                                };
-      load_instructions[3] <= { // add reference + offset -> reg1
-                               // ld_en,  val,    dest,
-                               1'd0,      27'd0,  10'd0,
-                               // neg_en, src,    dest,
-                               1'd0,      10'd0,  10'd0,
-                               // add_en, src1,   src2,   dest,
-                               1'd1,      10'd5,  10'd6,  10'd1,
-                               // mul_en, src1,   src2,   dest
-                               1'd0,      10'd0,  10'd0,  10'd0
-                               };
-      load_instructions[4] <= { // while add operates, put B into reg0
+      load_instructions[3] <= { // put B into reg1
                                // ld_en,  val,        dest,
-                               1'd1,      solver_C_B, 10'd0,
+                               1'd1,      solver_C_B, 10'd1,
                                // neg_en, src,    dest,
                                1'd0,      10'd0,  10'd0,
                                // add_en, src1,   src2,   dest,
                                1'd0,      10'd0,  10'd0,  10'd0,
+                               // mul_en, src1,   src2,   dest
+                               1'd0,      10'd0,  10'd0,  10'd0
+                               };
+      load_instructions[4] <= { // add reference + offset -> reg0. nops after
+                               // ld_en,  val,    dest,
+                               1'd0,      27'd0,  10'd0,
+                               // neg_en, src,    dest,
+                               1'd0,      10'd0,  10'd0,
+                               // add_en, src1,   src2,    dest,
+                               1'd1,      10'd5,  10'd800, 10'd0,
                                // mul_en, src1,   src2,   dest
                                1'd0,      10'd0,  10'd0,  10'd0
                                };
@@ -128,12 +128,13 @@ module Row_Solver (
    //  State Machines
    //=======================================================
 
-   reg [3:0]                  state;
+   reg [4:0]                  state;
+   reg [2:0]                  load_instruction_half_step;
 
    parameter state_reset=0,
      state_load0=1, state_load1=2, state_load2=3,
-     state_load3=4, state_load4=5, state_wait_for_start=6,
-     state_compute=7;
+     state_load3=4, state_load4=5, state_load5=6,
+     state_wait_for_start=7, state_compute=8;
    always @(posedge solver_clk) begin
       output_stb <= 0;
       solver_reset <= 0;
@@ -144,6 +145,8 @@ module Row_Solver (
          vliw_instruction <= instruction_nop;
          output_value <= 0;
          solver_reset <= 1;
+
+         load_instruction_half_step <= 0;
 
          if (start_grant) begin
             state <= state_load0;
@@ -161,26 +164,59 @@ module Row_Solver (
       end
       // load the coords into the regs
       else if (state == state_load0) begin
-         state <= state_load1;
+         load_instruction_half_step <= load_instruction_half_step + 1;
+         if (load_instruction_half_step == 3) begin
+            state <= state_load1;
+            load_instruction_half_step <= 0;
+         end
          solver_start <= 0;
 
          vliw_instruction <= load_instructions[0];
       end
       else if (state == state_load1) begin
-         state <= state_load2;
+         load_instruction_half_step <= load_instruction_half_step + 1;
+         if (load_instruction_half_step == 3) begin
+            state <= state_load2;
+            load_instruction_half_step <= 0;
+         end
+
          vliw_instruction <= load_instructions[1];
       end
       else if (state == state_load2) begin
-         state <= state_load3;
+         load_instruction_half_step <= load_instruction_half_step + 1;
+         if (load_instruction_half_step == 3) begin
+            state <= state_load3;
+            load_instruction_half_step <= 0;
+         end
+
          vliw_instruction <= load_instructions[2];
       end
       else if (state == state_load3) begin
-         state <= state_load4;
+         load_instruction_half_step <= load_instruction_half_step + 1;
+         if (load_instruction_half_step == 3) begin
+            state <= state_load4;
+            load_instruction_half_step <= 0;
+         end
+
          vliw_instruction <= load_instructions[3];
       end
       else if (state == state_load4) begin
-         state <= state_wait_for_start;
+         load_instruction_half_step = load_instruction_half_step + 1;
+         if (load_instruction_half_step == 3) begin
+            state <= state_load5;
+            load_instruction_half_step <= 0;
+         end
+
          vliw_instruction <= load_instructions[4];
+      end
+      else if (state == state_load5) begin
+         load_instruction_half_step <= load_instruction_half_step + 1;
+         if (load_instruction_half_step == 3) begin
+            state <= state_wait_for_start;
+            load_instruction_half_step <= 0;
+         end
+
+         vliw_instruction <= instruction_nop;
       end
       else if (state == state_wait_for_start) begin
          vliw_instruction <= instruction_nop;
@@ -190,7 +226,7 @@ module Row_Solver (
          end
       end
       else if (state == state_compute) begin
-         vliw_instruction <= instruction_end; // TODO: vliw_instruction_broadcast;
+         vliw_instruction <= instruction_end; //vliw_instruction_broadcast;
          if (instruction_number == 0) output_value <= output_value + 1;
          if (solver_done || output_value > max_iterations) begin
             output_stb <= 1;
