@@ -232,7 +232,7 @@
    {
       datum _sortIndex
       {
-         value = "15";
+         value = "16";
          type = "int";
       }
    }
@@ -253,7 +253,7 @@
    {
       datum _sortIndex
       {
-         value = "14";
+         value = "15";
          type = "int";
       }
    }
@@ -261,7 +261,7 @@
    {
       datum _sortIndex
       {
-         value = "16";
+         value = "17";
          type = "int";
       }
    }
@@ -283,6 +283,14 @@
       datum _sortIndex
       {
          value = "13";
+         type = "int";
+      }
+   }
+   element solver_clk_bridge
+   {
+      datum _sortIndex
+      {
+         value = "14";
          type = "int";
       }
    }
@@ -336,7 +344,7 @@
  <interface name="clk_100mhz" internal="clk_0.clk" type="clock" dir="start" />
  <interface
    name="clk_solver"
-   internal="solver_clk.outclk0"
+   internal="solver_clk_bridge.out_clk"
    type="clock"
    dir="start" />
  <interface
@@ -1021,7 +1029,7 @@
   <parameter name="bitClearingEdgeCapReg" value="false" />
   <parameter name="bitModifyingOutReg" value="false" />
   <parameter name="captureEdge" value="false" />
-  <parameter name="clockRate" value="100000000" />
+  <parameter name="clockRate" value="50000000" />
   <parameter name="direction" value="Input" />
   <parameter name="edgeType" value="RISING" />
   <parameter name="generateIRQ" value="false" />
@@ -1035,7 +1043,7 @@
   <parameter name="bitClearingEdgeCapReg" value="false" />
   <parameter name="bitModifyingOutReg" value="false" />
   <parameter name="captureEdge" value="false" />
-  <parameter name="clockRate" value="100000000" />
+  <parameter name="clockRate" value="50000000" />
   <parameter name="direction" value="Output" />
   <parameter name="edgeType" value="RISING" />
   <parameter name="generateIRQ" value="false" />
@@ -1049,7 +1057,7 @@
   <parameter name="bitClearingEdgeCapReg" value="false" />
   <parameter name="bitModifyingOutReg" value="false" />
   <parameter name="captureEdge" value="false" />
-  <parameter name="clockRate" value="100000000" />
+  <parameter name="clockRate" value="50000000" />
   <parameter name="direction" value="Output" />
   <parameter name="edgeType" value="RISING" />
   <parameter name="generateIRQ" value="false" />
@@ -1063,7 +1071,7 @@
   <parameter name="bitClearingEdgeCapReg" value="false" />
   <parameter name="bitModifyingOutReg" value="false" />
   <parameter name="captureEdge" value="false" />
-  <parameter name="clockRate" value="100000000" />
+  <parameter name="clockRate" value="50000000" />
   <parameter name="direction" value="Output" />
   <parameter name="edgeType" value="RISING" />
   <parameter name="generateIRQ" value="false" />
@@ -1283,7 +1291,7 @@
   <parameter name="gui_multiply_factor" value="1" />
   <parameter name="gui_number_of_clocks" value="1" />
   <parameter name="gui_operation_mode" value="direct" />
-  <parameter name="gui_output_clock_frequency0" value="60.0" />
+  <parameter name="gui_output_clock_frequency0" value="50.0" />
   <parameter name="gui_output_clock_frequency1" value="100.0" />
   <parameter name="gui_output_clock_frequency10" value="100.0" />
   <parameter name="gui_output_clock_frequency11" value="100.0" />
@@ -1367,11 +1375,20 @@
   <parameter name="gui_switchover_mode">Automatic Switchover</parameter>
   <parameter name="gui_use_locked" value="false" />
  </module>
+ <module
+   name="solver_clk_bridge"
+   kind="altera_clock_bridge"
+   version="16.1"
+   enabled="1">
+  <parameter name="DERIVED_CLOCK_RATE" value="50000000" />
+  <parameter name="EXPLICIT_CLOCK_RATE" value="50000000" />
+  <parameter name="NUM_CLOCK_OUTPUTS" value="1" />
+ </module>
  <module name="step" kind="altera_avalon_pio" version="16.1" enabled="1">
   <parameter name="bitClearingEdgeCapReg" value="false" />
   <parameter name="bitModifyingOutReg" value="false" />
   <parameter name="captureEdge" value="false" />
-  <parameter name="clockRate" value="100000000" />
+  <parameter name="clockRate" value="50000000" />
   <parameter name="direction" value="Output" />
   <parameter name="edgeType" value="RISING" />
   <parameter name="generateIRQ" value="false" />
@@ -1520,29 +1537,34 @@
  <connection
    kind="clock"
    version="16.1"
-   start="System_PLL.sys_clk"
-   end="AV_Config.clk" />
+   start="solver_clk.outclk0"
+   end="frame_ms.clk" />
  <connection
    kind="clock"
    version="16.1"
-   start="System_PLL.sys_clk"
-   end="init_x.clk" />
- <connection kind="clock" version="16.1" start="System_PLL.sys_clk" end="step.clk" />
- <connection
-   kind="clock"
-   version="16.1"
-   start="System_PLL.sys_clk"
-   end="init_y.clk" />
- <connection
-   kind="clock"
-   version="16.1"
-   start="System_PLL.sys_clk"
+   start="solver_clk.outclk0"
    end="num_iter.clk" />
  <connection
    kind="clock"
    version="16.1"
+   start="solver_clk.outclk0"
+   end="init_y.clk" />
+ <connection kind="clock" version="16.1" start="solver_clk.outclk0" end="step.clk" />
+ <connection
+   kind="clock"
+   version="16.1"
+   start="solver_clk.outclk0"
+   end="init_x.clk" />
+ <connection
+   kind="clock"
+   version="16.1"
+   start="solver_clk.outclk0"
+   end="solver_clk_bridge.in_clk" />
+ <connection
+   kind="clock"
+   version="16.1"
    start="System_PLL.sys_clk"
-   end="frame_ms.clk" />
+   end="AV_Config.clk" />
  <connection
    kind="clock"
    version="16.1"

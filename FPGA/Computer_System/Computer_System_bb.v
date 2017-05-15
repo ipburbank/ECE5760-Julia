@@ -3,7 +3,6 @@ module Computer_System (
 	av_config_SDAT,
 	av_config_SCLK,
 	clk_100mhz_clk,
-	clk_solver_clk,
 	clock_bridge_0_in_clk_clk,
 	frame_ms_export,
 	hps_io_hps_io_emac1_inst_TX_CLK,
@@ -95,6 +94,7 @@ module Computer_System (
 	program_memory_readdata,
 	program_memory_writedata,
 	program_memory_byteenable,
+	program_num_instrs_export,
 	sdram_clk_clk,
 	step_export,
 	system_pll_ref_clk_clk,
@@ -109,12 +109,11 @@ module Computer_System (
 	vga_B,
 	vga_pll_ref_clk_clk,
 	vga_pll_ref_reset_reset,
-	program_num_instrs_export);	
+	clk_solver_clk);	
 
 	inout		av_config_SDAT;
 	output		av_config_SCLK;
 	output		clk_100mhz_clk;
-	output		clk_solver_clk;
 	input		clock_bridge_0_in_clk_clk;
 	input	[31:0]	frame_ms_export;
 	output		hps_io_hps_io_emac1_inst_TX_CLK;
@@ -206,6 +205,7 @@ module Computer_System (
 	output	[127:0]	program_memory_readdata;
 	input	[127:0]	program_memory_writedata;
 	input	[15:0]	program_memory_byteenable;
+	input	[31:0]	program_num_instrs_export;
 	output		sdram_clk_clk;
 	output	[26:0]	step_export;
 	input		system_pll_ref_clk_clk;
@@ -220,5 +220,5 @@ module Computer_System (
 	output	[7:0]	vga_B;
 	input		vga_pll_ref_clk_clk;
 	input		vga_pll_ref_reset_reset;
-	input	[31:0]	program_num_instrs_export;
+	output		clk_solver_clk;
 endmodule
