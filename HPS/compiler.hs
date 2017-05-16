@@ -12,4 +12,4 @@ handleParseError (Right x) = x
 main = do
   line <- getLine
   -- putStrLn $ show $ solution (filter (/=' ') line)
-  putStrLn $ show $ JuliaAssembler.assemble $ reverse $ JuliaIR.schedule $ handleParseError $ JuliaParser.juliaParse line
+  putStrLn $ show $ {-|JuliaAssembler.assemble $ reverse $ JuliaIR.schedule $ handleParseError $-} JuliaParser.juliaParse line

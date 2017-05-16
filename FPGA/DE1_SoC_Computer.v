@@ -366,11 +366,16 @@ module DE1_SoC_Computer (
 
    reg [7:0]                                       program_memory_address;
    wire [127:0]                                    vliw_instruction_broadcast_padded;
-   wire [120:0]                                    vliw_instruction_broadcast = vliw_instruction_broadcast_padded[120:0];
+   reg [120:0]                                     vliw_instruction_broadcast;// = vliw_instruction_broadcast_padded[120:0];
+
+   // TODO TMP
+   reg [120:0]                                     circle_instructions [0:16];
 
    always @(posedge CLOCK_SOLVER) begin
-      if (reset || (program_memory_address == 5)) program_memory_address <= 0;
+      if (reset || (program_memory_address == 19)) program_memory_address <= 0;
       else program_memory_address <= program_memory_address + 1;
+
+      vliw_instruction_broadcast <= circle_instructions[program_memory_address[7:2]];
    end
 
    //=======================================================
@@ -648,4 +653,177 @@ module DE1_SoC_Computer (
                                .program_memory_writedata        (),//we don't write
                                .program_memory_byteenable       (-1)
                                );
+
+   always @(*) begin
+      // circle_instructions[0] <= { //Za^2 -> 396
+      //                           // ld_en,  val,    dest,
+      //                           1'd0,      27'd0,  10'd0,
+      //                           // neg_en, src,    dest,
+      //                           1'd0,      10'd0,  10'd0,
+      //                           // add_en, src1,   src2,   dest,
+      //                           1'd0,      10'd0,  10'd0,  10'd0,
+      //                           // mul_en, src1,   src2,   dest
+      //                           1'd1,      10'd0,  10'd0,  10'd396
+      //                           };
+      // circle_instructions[1] <= { //Zb^2 -> 397
+      //                           // ld_en,  val,    dest,
+      //                           1'd0,      27'd0,  10'd0,
+      //                           // neg_en, src,    dest,
+      //                           1'd0,      10'd0,  10'd0,
+      //                           // add_en, src1,   src2,   dest,
+      //                           1'd0,      10'd0,  10'd0,  10'd0,
+      //                           // mul_en, src1,   src2,   dest
+      //                           1'd1,      10'd1,  10'd1,  10'd397
+      //                           };
+      // circle_instructions[2] <= { //NEG397 -> 144
+      //                           // ld_en,  val,    dest,
+      //                           1'd0,      27'd0,  10'd0,
+      //                           // neg_en, src,    dest,
+      //                           1'd1,      10'd397,  10'd144,
+      //                           // add_en, src1,   src2,   dest,
+      //                           1'd0,      10'd0,  10'd0,  10'd0,
+      //                           // mul_en, src1,   src2,   dest
+      //                           1'd0,      10'd0,  10'd0,  10'd0
+      //                           };
+      // circle_instructions[3] <= { //144+396->266
+      //                           // ld_en,  val,    dest,
+      //                           1'd0,      27'd0,  10'd0,
+      //                           // neg_en, src,    dest,
+      //                           1'd0,      10'd0,  10'd0,
+      //                           // add_en, src1,   src2,   dest,
+      //                           1'd1,      10'd144,  10'd396,  10'd266,
+      //                           // mul_en, src1,   src2,   dest
+      //                           1'd0,      10'd0,  10'd0,  10'd0
+      //                           };
+      // circle_instructions[4] <= { //Zba -> 398
+      //                           // ld_en,  val,    dest,
+      //                           1'd0,      27'd0,  10'd0,
+      //                           // neg_en, src,    dest,
+      //                           1'd0,      10'd0,  10'd0,
+      //                           // add_en, src1,   src2,   dest,
+      //                           1'd0,      10'd0,  10'd0,  10'd0,
+      //                           // mul_en, src1,   src2,   dest
+      //                           1'd1,      10'd0,  10'd1,  10'd398
+      //                           };
+      // circle_instructions[5] <= { //Zab -> 399
+      //                           // ld_en,  val,    dest,
+      //                           1'd0,      27'd0,  10'd0,
+      //                           // neg_en, src,    dest,
+      //                           1'd0,      10'd0,  10'd0,
+      //                           // add_en, src1,   src2,   dest,
+      //                           1'd0,      10'd0,  10'd0,  10'd0,
+      //                           // mul_en, src1,   src2,   dest
+      //                           1'd1,      10'd1,  10'd0,  10'd399
+      //                           };
+      // circle_instructions[6] <= { //398+399 -> 267
+      //                           // ld_en,  val,    dest,
+      //                           1'd0,      27'd0,  10'd0,
+      //                           // neg_en, src,    dest,
+      //                           1'd0,      10'd0,  10'd0,
+      //                           // add_en, src1,   src2,   dest,
+      //                           1'd1,      10'd399,  10'd398,  10'd267,
+      //                           // mul_en, src1,   src2,   dest
+      //                           1'd0,      10'd0,  10'd0,  10'd0
+      //                           };
+      // circle_instructions[7] <= { // NOP
+      //                           // ld_en,  val,    dest,
+      //                           1'd0,      27'd0,  10'd0,
+      //                           // neg_en, src,    dest,
+      //                           1'd0,      10'd0,  10'd0,
+      //                           // add_en, src1,   src2,   dest,
+      //                           1'd0,      10'd0,  10'd0,  10'd0,
+      //                           // mul_en, src1,   src2,   dest
+      //                           1'd0,      10'd0,  10'd0,  10'd0
+      //                           };
+      // circle_instructions[8] <= { //"0" -> 4
+      //                           // ld_en,  val,    dest,
+      //                           1'd1,      27'd0,  10'd4,
+      //                           // neg_en, src,    dest,
+      //                           1'd0,      10'd0,  10'd0,
+      //                           // add_en, src1,   src2,   dest,
+      //                           1'd0,      10'd0,  10'd0,  10'd0,
+      //                           // mul_en, src1,   src2,   dest
+      //                           1'd0,      10'd0,  10'd0,  10'd0
+      //                           };
+      // circle_instructions[9] <= { //4+267 -> 1
+      //                           // ld_en,  val,    dest,
+      //                           1'd0,      27'd0,  10'd0,
+      //                           // neg_en, src,    dest,
+      //                           1'd0,      10'd0,  10'd0,
+      //                           // add_en, src1,   src2,   dest,
+      //                           1'd1,      10'd4,  10'd267,  10'd1,
+      //                           // mul_en, src1,   src2,   dest
+      //                           1'd0,      10'd0,  10'd0,  10'd0
+      //                           };
+      // circle_instructions[10] <= { //4+266 -> 0
+      //                           // ld_en,  val,    dest,
+      //                           1'd0,      27'd0,  10'd0,
+      //                           // neg_en, src,    dest,
+      //                           1'd0,      10'd0,  10'd0,
+      //                           // add_en, src1,   src2,   dest,
+      //                           1'd1,      10'd4,  10'd266,  10'd0,
+      //                           // mul_en, src1,   src2,   dest
+      //                           1'd0,      10'd0,  10'd0,  10'd0
+      //                           };
+      // circle_instructions[11] <= { //NOP
+      //                           // ld_en,  val,    dest,
+      //                           1'd0,      27'd0,  10'd0,
+      //                           // neg_en, src,    dest,
+      //                           1'd0,      10'd0,  10'd0,
+      //                           // add_en, src1,   src2,   dest,
+      //                           1'd0,      10'd0,  10'd0,  10'd0,
+      //                           // mul_en, src1,   src2,   dest
+      //                           1'd0,      10'd0,  10'd0,  10'd0
+      //                           };
+      circle_instructions[0] <= { //1*1 -> 801
+                                // ld_en,  val,    dest,
+                                1'd0,      27'd0,  10'd0,
+                                // neg_en, src,    dest,
+                                1'd0,      10'd0,  10'd0,
+                                // add_en, src1,   src2,   dest,
+                                1'd0,      10'd0,  10'd0,  10'd0,
+                                // mul_en, src1,   src2,   dest
+                                1'd1,      10'd1,  10'd1,  10'd4
+                                };
+      circle_instructions[1] <= { //0*0->800
+                                // ld_en,  val,    dest,
+                                1'd0,      27'd0,  10'd0,
+                                // neg_en, src,    dest,
+                                1'd0,      10'd0,  10'd0,
+                                // add_en, src1,   src2,   dest,
+                                1'd0,      10'd0,  10'd0,  10'd0,
+                                // mul_en, src1,   src2,   dest
+                                1'd1,      10'd0,  10'd0,  10'd3
+                                };
+      circle_instructions[2] <= { //800+801->2
+                                // ld_en,  val,    dest,
+                                1'd0,      27'd0,  10'd0,
+                                // neg_en, src,    dest,
+                                1'd0,      10'd0,  10'd0,
+                                // add_en, src1,    src2,    dest,
+                                1'd1,      10'd3, 10'd4, 10'd2,
+                                // mul_en, src1,   src2,   dest
+                                1'd0,      10'd0,  10'd0,  10'd0
+                                };
+      circle_instructions[3] <= { //NOP
+                                // ld_en,  val,    dest,
+                                1'd0,      27'd0,  10'd0,
+                                // neg_en, src,    dest,
+                                1'd0,      10'd0,  10'd0,
+                                // add_en, src1,   src2,   dest,
+                                1'd0,      10'd0,  10'd0,  10'd0,
+                                // mul_en, src1,   src2,   dest
+                                1'd0,      10'd0,  10'd0,  10'd0
+                                };
+      circle_instructions[4] <= { //NOP
+                                // ld_en,  val,    dest,
+                                1'd0,      27'd0,  10'd0,
+                                // neg_en, src,    dest,
+                                1'd0,      10'd0,  10'd0,
+                                // add_en, src1,   src2,   dest,
+                                1'd0,      10'd0,  10'd0,  10'd0,
+                                // mul_en, src1,   src2,   dest
+                                1'd0,      10'd0,  10'd0,  10'd0
+                                };
+   end
 endmodule // end top level

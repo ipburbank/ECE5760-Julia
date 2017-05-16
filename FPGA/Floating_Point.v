@@ -405,7 +405,7 @@ module FpAdd (
 
    // Determine output fraction and exponent change with position of first 1.
    wire [17:0] oSum_f;
-   wire [5:0]  shft_amt;
+   wire [7:0]  shft_amt;
    assign shft_amt = pre_frac[36] ? 8'd0  : pre_frac[35] ? 8'd1  :
                      pre_frac[34] ? 8'd2  : pre_frac[33] ? 8'd3  :
                      pre_frac[32] ? 8'd4  : pre_frac[31] ? 8'd5  :
@@ -428,10 +428,8 @@ module FpAdd (
 
    wire [53:0] pre_frac_shft, uflow_shift;
    // the shift +1 is because high order bit is not stored, but implied
-   //   assign uflow_shift = {pre_frac, 17'b0} << (shft_amt); //? shft_amt for overflow
-   assign uflow_shift = {pre_frac * (6'd1 << (shft_amt)), 17'b0};
-   assign pre_frac_shft = uflow_shift << 1;
-
+   assign pre_frac_shft = {pre_frac, 17'b0} << (shft_amt+1); //? shft_amt+1
+   assign uflow_shift = {pre_frac, 17'b0} << (shft_amt); //? shft_amt for overflow
    assign oSum_f = pre_frac_shft[53:36];
 
    wire [7:0]  oSum_e;
@@ -445,7 +443,7 @@ module FpAdd (
    // if top bit of matissa is not set, then denorm
    assign underflow = ~uflow_shift[53];
 
-   always @(*) begin // TODO: IPB
+   always @(*) begin // posedge iCLK
       oSum <= (buf_A_e_zero && buf_B_e_zero)    ? 27'b0 :
               buf_A_e_zero                     ? buf_B :
               buf_B_e_zero                     ? buf_A :

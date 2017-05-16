@@ -25,6 +25,9 @@
 #define PIO_Y_0               0x00000020
 #define PIO_NUM_ITER          0x00000030
 #define PIO_FRAME_MS          0x00000040
+#define PIO_PROG_NUM_INSTRS   0x00000050
+
+#define PROG_MEMORY           0x00000800
 
 
 /* Cyclone V FPGA devices */

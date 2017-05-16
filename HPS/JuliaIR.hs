@@ -41,7 +41,7 @@ tick = do n <- get
           put (n+1)
           return n
 
-regFileNumElements = 128 -- 256 / 2, 256 regs times two for complex
+regFileNumElements = 256
 
 type Complex = (Register, Register)
 
@@ -84,20 +84,24 @@ preschedule (JuliaParser.Add a b) = do
 preschedule (JuliaParser.Sub a b) = do
   returnRegReNoOffset    <- tick
   returnRegImNoOffset    <- tick
-  negTmpNoOffset         <- tick
+  negTmpReNoOffset       <- tick
+  negTmpImNoOffset       <- tick
   (subA, (retARe, retAIm)) <- preschedule a
   (subB, (retBRe, retBIm)) <- preschedule b
   let returnRegRe = returnRegReNoOffset + (2*regFileNumElements) in
     let returnRegIm = returnRegImNoOffset + (2*regFileNumElements) in
-      let negTmp = negTmpNoOffset + (1*regFileNumElements) in
-    return ([]:[]:[Add retAIm negTmp returnRegIm]:[Neg retBIm negTmp]:
-            [Add retARe negTmp returnRegRe]:[Neg retBRe negTmp]:(mergeSchedules subA subB),
-            (returnRegRe, returnRegIm))
+      let negTmpRe = negTmpReNoOffset + (1*regFileNumElements) in
+        let negTmpIm = negTmpImNoOffset + (1*regFileNumElements) in
+          return ([]:[]:[Add retAIm negTmpIm returnRegIm]:[Neg retBIm negTmpIm]:
+                  [Add retARe negTmpRe returnRegRe]:[Neg retBRe negTmpRe]:(mergeSchedules subA subB),
+                  (returnRegRe, returnRegIm))
 preschedule (JuliaParser.Mul l r) = do
   returnRegReNoOffset    <- tick
   returnRegImNoOffset    <- tick
   mulTmp1NoOffset        <- tick
   mulTmp2NoOffset        <- tick
+  mulTmp3NoOffset        <- tick
+  mulTmp4NoOffset        <- tick
   negTmpNoOffset         <- tick
   (subA, (a, b)) <- preschedule r
   (subB, (c, d)) <- preschedule l
@@ -105,11 +109,13 @@ preschedule (JuliaParser.Mul l r) = do
     let returnRegIm = returnRegImNoOffset + (2*regFileNumElements) in
       let mulTmp1 = mulTmp1NoOffset + (3*regFileNumElements) in
         let mulTmp2 = mulTmp2NoOffset + (3*regFileNumElements) in
-          let negTmp = negTmpNoOffset + (1*regFileNumElements) in
-            return ([]:[]:[Add mulTmp1 mulTmp2 returnRegIm]:[Mul b c mulTmp2]:[Mul a d mulTmp1]:
-                    [Add negTmp mulTmp1 returnRegRe]:[Neg mulTmp2 negTmp]:[Mul b d mulTmp2]:[Mul a c mulTmp1]:
-                    (mergeSchedules subA subB),
-                    (returnRegRe, returnRegIm))
+          let mulTmp3 = mulTmp3NoOffset + (3*regFileNumElements) in
+            let mulTmp4 = mulTmp4NoOffset + (3*regFileNumElements) in
+              let negTmp = negTmpNoOffset + (1*regFileNumElements) in
+                return ([]:[]:[Add mulTmp4 mulTmp3 returnRegIm]:[Mul b c mulTmp4]:[Mul a d mulTmp3]:
+                        [Add negTmp mulTmp1 returnRegRe]:[Neg mulTmp2 negTmp]:[Mul b d mulTmp2]:[Mul a c mulTmp1]:
+                        (mergeSchedules subA subB),
+                        (returnRegRe, returnRegIm))
 -- preschedule (JuliaParser.Div a b) = do
 --   return ([], 0)
 -- preschedule (JuliaParser.Pow a b) = do
@@ -118,7 +124,7 @@ preschedule (JuliaParser.Mul l r) = do
 ----------------- Save to Z ----------------
 
 saveZMagnitude :: Complex -> [[Instruction]]
-saveZMagnitude (reReg, imReg) = []:[]:[Add 4 5 3]:[Mul 0 0 4, Mul 1 1 5]: -- calc/save magnitude
+saveZMagnitude (reReg, imReg) = []:[]:[Add 4 5 magnitudeReg]:[Mul 0 0 4, Mul 1 1 5]: -- calc/save magnitude
                                 []:[]:[Add 4 reReg 0, Add 4 imReg 1]:[Load 0 4]:[] -- save z
 
 ----------------- FLATTEN SCHEDULE -----------------
