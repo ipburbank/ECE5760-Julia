@@ -1,0 +1,863 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2017-05-16 Tue 05:36 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title></title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Istvan P. Burbank" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org826fc22">1. Julia Set Renderer</a></li>
+<li><a href="#org6070a6d">2. Architecture</a>
+<ul>
+<li><a href="#orga116878">2.1. Framework (FPGA)</a>
+<ul>
+<li><a href="#orgeb26fa4">2.1.1. Pixel Solver</a></li>
+<li><a href="#org03c288c">2.1.2. Row Solver</a></li>
+<li><a href="#org380b0dc">2.1.3. Frame Solver</a></li>
+<li><a href="#orgf315afa">2.1.4. Top Level</a></li>
+<li><a href="#org0d2899f">2.1.5. QSys</a></li>
+</ul>
+</li>
+<li><a href="#org3b66322">2.2. User Control (HPS)</a></li>
+</ul>
+</li>
+<li><a href="#orge63eca9">3. Program/hardware design:</a>
+<ul>
+<li><a href="#org64fbe3c">3.1. Compiler</a>
+<ul>
+<li><a href="#orgc78118a">3.1.1. Parser</a></li>
+<li><a href="#org1196588">3.1.2. IR</a></li>
+<li><a href="#org6bc49f6">3.1.3. Assembler</a></li>
+</ul>
+</li>
+<li><a href="#org1244ae1">3.2. VLIW Processor</a></li>
+<li><a href="#org0077a5b">3.3. Row Solver</a></li>
+<li><a href="#org75721c1">3.4. Frame Solver</a></li>
+</ul>
+</li>
+<li><a href="#orgf298705">4. Results of the design:</a></li>
+<li><a href="#orgd9bfdf4">5. Conclusions:</a></li>
+<li><a href="#orgbfece45">6. Appndix A</a></li>
+<li><a href="#org90b7906">7. Appendix with commented Verilog and/or program listings. When posting code, you must comply with all Altera IP considerations.</a></li>
+<li><a href="#org1fcd7f1">8. Appendix with schematics if you build hardware external to the DE2 board (you can download free software from expresspcb.com to draw schematics).</a></li>
+<li><a href="#org19429b8">9. Appendix with a list of the specific tasks in the project carried out by each team member.</a></li>
+<li><a href="#orgfb12364">10. References you used:</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org826fc22" class="outline-2">
+<h2 id="org826fc22"><span class="section-number-2">1</span> Julia Set Renderer</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+The Julia Set Renderer is a combination of compiler (written in Haskell) and a
+custom VLIW processor/supporting framework running on an FPGA. Julia sets are fractal
+shapes which are generated by iterating a point's coordinate in a rational
+polynomial for every point in the complex plane. Under that iteration, the value
+will either diverge to infinity eventually in which case it is not considered in
+the set, or have a magnitude bounded by a some constant in which case it is
+considered in the set.
+</p>
+
+<p>
+This project gives the user a terminal in which to type a formula (for example
+\(z^2+c\)) and draws the Julia set on a VGA screen. The user can use a mouse to
+pan/zoom around the drawn set.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6070a6d" class="outline-2">
+<h2 id="org6070a6d"><span class="section-number-2">2</span> Architecture</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+I started with my implementation of a solver for <a href="https://people.ece.cornell.edu/land/courses/ece5760/LABS/s2017/lab4_mandelbrot.html">Lab 4 - Mandelbrot Set</a>. My
+implementation used 27-bit, floating point arithmetic to draw regions of the
+Mandelbrot set by mapping each pixel to a coordinate in the complex plane and
+determining whether the iterated equation \(Z_{n+1} = Z_n^2 + C\), where \(Z_0=0 +
+0i\) and \(C\) is the coordinate corresponding to the pixel in question,
+diverges. The color of the pixel is determined by how many iterations it took
+for \(Z\) to have magnitude greater than \(2\) (after which the iterated equation
+will provably diverge), capped at 1000 iterations.
+</p>
+
+<p>
+For that project, implemented on the DE1-SoC development board, I used the HPS
+(an ARM processor connected to the FPGA fabric via an AXI bus) to handle the UI
+components including the mouse updates, and the FPGA to fill the VGA framebuffer
+with colors based on how long it took the point to escape. The HPS updates the
+parameters in the FPGA used to map the pixels on the screen to complex
+coordinates based on the user inptus to enable the interactivity.
+</p>
+
+<p>
+In the Mandelbrot set project my solver iterating the equation for \(Z\) was
+static and hand optimized for the given equation. In this project I replaced
+that solver with a VLIW CPU designed to support a limited set of floating point
+operations that could be used to iterate arbitrary equations (see <a href="#org1244ae1">3.2</a>). I also wrote a compiler which produces instructions to be run on the
+VLIW processor (see <a href="#org64fbe3c">3.1</a>).
+</p>
+
+<p>
+I will first describe the architecture of the FPGA-side framework that sets up
+the VLIW processor to solve a particular pixel, then the HPS-side UI components,
+and finally the heart of this project - the VLIW processor and its compiler.
+</p>
+</div>
+
+<div id="outline-container-orga116878" class="outline-3">
+<h3 id="orga116878"><span class="section-number-3">2.1</span> Framework (FPGA)</h3>
+<div class="outline-text-3" id="text-2-1">
+</div><div id="outline-container-orgeb26fa4" class="outline-4">
+<h4 id="orgeb26fa4"><span class="section-number-4">2.1.1</span> Pixel Solver</h4>
+<div class="outline-text-4" id="text-2-1-1">
+<p>
+The pixel solver, a shim around the the VLIW processor, provides an interface
+for controlling the VLIW processor. Interfacing with the pixel solver consists
+of waiting for the pixel solver to set a flag high indicating that it is ready
+to receive a new input. On the same cycle that the inputs are ready a <code>start</code>
+signal is strobed which sets off the computation. The solver takes as inputs a
+signal <code>C_B</code> which is the imaginary component of the value to be
+iterated. Additionally, it accepts <code>C_A_reference</code> (floating point), <code>C_A_step</code>
+(floating point), and <code>C_A_column</code> (10-bit unsigned number), which specify the
+real component of the point's location by the expression \(C\_A\_reference +
+C\_A\_step * C\_A\_column\). Passing those values to the solver instead of
+computing them outside the solver is an optimization which allows using the
+solver's instantiated adder/multiplier instead of instantiating new ones as
+resources on the board are in high demand. When the solver is done, it sets it's
+output <code>num_iterations</code> to the number of iterations it took to escape the
+threshold and strobes the outut <code>done</code> (effectively sending an interrupt). A new
+value may now be loaded.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org03c288c" class="outline-4">
+<h4 id="org03c288c"><span class="section-number-4">2.1.2</span> Row Solver</h4>
+<div class="outline-text-4" id="text-2-1-2">
+<p>
+The row solver instantiates a single pixel solver, but provides an additional
+abstraction. The row solver accepts the imaginary coordinate of the point to be
+operated, the first real value, and the real step size (those are passed
+directly directly to the pixel solver in addition to the column number which the
+row solver generates). The row solver has a similar request/grant interface for
+inputs. The row solver generates a pixel's value, column index, and row index
+strobing another output each time the outputs are valid.
+</p>
+
+<p>
+The row solver supplies the nested pixel solver with the necessary inputs,
+starting at column 0. When the pixel solver strobes that an output is ready that
+is combinationally passed to the row solver's outputs (additional outputs of the
+row solver are set when the solver receives its <code>grant</code> and are constant for the
+duration of the row). Each time the pixel solver completes the row solver
+increments the column count and restarts the pixel solver on the next cycle
+unless the end of the row has been reached in which case the row solver enters
+the reset state, awaiting another <code>grant</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org380b0dc" class="outline-4">
+<h4 id="org380b0dc"><span class="section-number-4">2.1.3</span> Frame Solver</h4>
+<div class="outline-text-4" id="text-2-1-3">
+<p>
+The frame solver accepts the coordinates of the top left corner of the screen
+and the step sizes for the real and imaginary axes. The frame solver
+instantiates more than 45 row solvers and coordinates the inputs and outputs
+to/from each. At most one row solver is given a <code>grant</code> in a particular cycle
+(so it takes at least 45 cycles to get the row solvers all computing). On any
+cycle when at least one row solver's <code>request</code> flag is set high the lowest
+indexed row solver whose <code>request</code> is high receives a <code>grant</code> and gets assigned
+an imaginary coordinate corresponding to the row it should start computing. The
+imaginary coordinate is incremented by the imaginary step size using an
+adder. If no row solvers are have their <code>request</code> flag set then no action is
+taken. If the row index exceeds the frame size then it is reset to 0 and the
+running count of the imaginary coordinate is reset to the initial value (that of
+the top left corner).
+</p>
+
+<p>
+The output of each row solver is fed into a corresponding true dual-ported
+FIFO. Each time the row solver strobes its output signal the coordinates of the
+most recently generated pixel and the pixel's value are concatenated and
+inserted into a FIFO.
+</p>
+
+<p>
+On a separate clock domain, the outputs of the FIFOs are arbitrated and used as
+the outputs of the frame solver. On each clock cycle on the <code>output_clk</code>
+domain a pixel's coordinates and value may be output; if one is available on
+that cycle then a strobe signal is set high. FIFOs are emptied with those having
+lowest index having highest priority. While that is not fair, it doesn't impact
+the draw time of the solver since the high-indexed solvers will simply be
+blocked when framebuffer bandwidth is the limiting factor and since solvers are
+not pre-assigned rows a subsequent change in the cause of the bottleneck would
+not disproportionately leave some solvers "out of work".
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf315afa" class="outline-4">
+<h4 id="orgf315afa"><span class="section-number-4">2.1.4</span> Top Level</h4>
+<div class="outline-text-4" id="text-2-1-4">
+<p>
+The top level module instantiates a single frame solver and interfaces it with
+the HPS PIO signals and the VGA framebuffer. The VGA framebuffer is a
+dual-ported SRAM with one port dedicated to the VGA subsystem and the second
+exported from QSYS into Verilog. The output interface of the Frame Solver
+conveniently wires combinationally into the input interface of the SRAM; each
+time the frame solver's strobe indicating an output is available is wired to the
+SRAM's write enable and the frame solver's pixel coordinates combinationally
+determine the address to which the frame solver's iteration count output should
+be written. This is by design to minimize logic which can't be unit tested in
+ModelSim (the top level module is the only module not tested in ModelSim, as is
+discussed later). The SRAM's value is an 8-bit color which is determined by the
+bottom eight bits of the number of iterations that point took to escape.
+</p>
+
+<p>
+The top level module also keeps track of the number of cycles it takes to
+compute each frame which is passed to the HPS to display in milliseconds on the display.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0d2899f" class="outline-4">
+<h4 id="org0d2899f"><span class="section-number-4">2.1.5</span> QSys</h4>
+<div class="outline-text-4" id="text-2-1-5">
+<p>
+TODO
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3b66322" class="outline-3">
+<h3 id="org3b66322"><span class="section-number-3">2.2</span> User Control (HPS)</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+The HPS, running Linux, is responsible for updating the PIO registers with the
+current frame's top-left-corner position and step size. The user's mouse
+movements are scaled based on the current zoom and used to update the position,
+while the left/right mouse buttons increased and decreased the zoom by updating
+the step size and the top-left-corner position accordingly to keep the image
+centered during a zoom (otherwise you would be zooming into the top left
+corner).
+</p>
+
+<p>
+The HPS loads the a program generated by the compiler into the program memory
+when the HPS program is launched.
+</p>
+
+<p>
+The HPS also displays the current coordinates and the frame generation time on
+the display in the text buffer.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge63eca9" class="outline-2">
+<h2 id="orge63eca9"><span class="section-number-2">3</span> Program/hardware design:</h2>
+<div class="outline-text-2" id="text-3">
+</div><div id="outline-container-org64fbe3c" class="outline-3">
+<h3 id="org64fbe3c"><span class="section-number-3">3.1</span> Compiler</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+\(z*z+1i2\)
+</p>
+</div>
+
+<div id="outline-container-orgc78118a" class="outline-4">
+<h4 id="orgc78118a"><span class="section-number-4">3.1.1</span> Parser</h4>
+<div class="outline-text-4" id="text-3-1-1">
+<p>
+data Exp = Num Int
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">Cpx Exp Exp &#x2013; complex</td>
+</tr>
+
+<tr>
+<td class="org-left">Var String</td>
+</tr>
+
+<tr>
+<td class="org-left">Add Exp Exp</td>
+</tr>
+
+<tr>
+<td class="org-left">Sub Exp Exp</td>
+</tr>
+
+<tr>
+<td class="org-left">Mul Exp Exp</td>
+</tr>
+
+<tr>
+<td class="org-left">Div Exp Exp</td>
+</tr>
+
+<tr>
+<td class="org-left">Pow Exp Exp</td>
+</tr>
+
+<tr>
+<td class="org-left">Pos Exp</td>
+</tr>
+
+<tr>
+<td class="org-left">Neg Exp</td>
+</tr>
+</tbody>
+</table>
+<p>
+deriving (Show)
+</p>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #8ae234; font-weight: bold;">Right</span> <span style="color: #8c8c8c;">(</span><span style="color: #8ae234; font-weight: bold;">Add</span> <span style="color: #93a8c6;">(</span><span style="color: #8ae234; font-weight: bold;">Mul</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Var</span> <span style="color: #ad7fa8; font-style: italic;">"z"</span><span style="color: #b0b1a3;">)</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Var</span> <span style="color: #ad7fa8; font-style: italic;">"z"</span><span style="color: #b0b1a3;">)</span><span style="color: #93a8c6;">)</span> <span style="color: #93a8c6;">(</span><span style="color: #8ae234; font-weight: bold;">Cpx</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Num</span> 1<span style="color: #b0b1a3;">)</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Num</span> 2<span style="color: #b0b1a3;">)</span><span style="color: #93a8c6;">)</span><span style="color: #8c8c8c;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1196588" class="outline-4">
+<h4 id="org1196588"><span class="section-number-4">3.1.2</span> IR</h4>
+<div class="outline-text-4" id="text-3-1-2">
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #729fcf; font-weight: bold;">data</span> <span style="color: #8ae234; font-weight: bold;">Instruction</span> <span style="color: #ff6347;">=</span>
+  <span style="color: #888a85;">--     </span><span style="color: #888a85;">SRC1     SRC2     DEST</span>
+    <span style="color: #8ae234; font-weight: bold;">Add</span>  <span style="color: #8ae234; font-weight: bold;">Register</span> <span style="color: #8ae234; font-weight: bold;">Register</span> <span style="color: #8ae234; font-weight: bold;">Register</span>
+  <span style="color: #ff6347;">|</span> <span style="color: #8ae234; font-weight: bold;">Mul</span>  <span style="color: #8ae234; font-weight: bold;">Register</span> <span style="color: #8ae234; font-weight: bold;">Register</span> <span style="color: #8ae234; font-weight: bold;">Register</span>
+  <span style="color: #888a85;">--     </span><span style="color: #888a85;">SRC      DEST</span>
+  <span style="color: #ff6347;">|</span> <span style="color: #8ae234; font-weight: bold;">Neg</span>  <span style="color: #8ae234; font-weight: bold;">Register</span> <span style="color: #8ae234; font-weight: bold;">Register</span>
+  <span style="color: #888a85;">--     </span><span style="color: #888a85;">Val      DEST</span>
+  <span style="color: #ff6347;">|</span> <span style="color: #8ae234; font-weight: bold;">Load</span> <span style="color: #8ae234; font-weight: bold;">Int</span>      <span style="color: #8ae234; font-weight: bold;">Register</span>
+  <span style="color: #888a85;">--     </span><span style="color: #888a85;">DEST</span>
+  <span style="color: #ff6347;">|</span> <span style="color: #8ae234; font-weight: bold;">Var</span>  <span style="color: #8ae234; font-weight: bold;">Register</span>
+                 <span style="color: #729fcf; font-weight: bold;">deriving</span> <span style="color: #8c8c8c;">(</span><span style="color: #8ae234; font-weight: bold;">Show</span><span style="color: #8c8c8c;">)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #729fcf; font-weight: bold;">type</span> <span style="color: #8ae234; font-weight: bold;">Complex</span> <span style="color: #ff6347;">=</span> <span style="color: #8c8c8c;">(</span><span style="color: #8ae234; font-weight: bold;">Register</span>, <span style="color: #8ae234; font-weight: bold;">Register</span><span style="color: #8c8c8c;">)</span>
+<span style="color: #edd400; font-weight: bold;">preschedule</span> <span style="color: #ff6347;">::</span> <span style="color: #8ae234; font-weight: bold;">JuliaParser.Exp</span> <span style="color: #ff6347;">-&gt;</span> <span style="color: #8ae234; font-weight: bold;">State</span> <span style="color: #8ae234; font-weight: bold;">Int</span> <span style="color: #8c8c8c;">(</span><span style="color: #93a8c6;">[</span><span style="color: #b0b1a3;">[</span><span style="color: #8ae234; font-weight: bold;">Instruction</span><span style="color: #b0b1a3;">]</span><span style="color: #93a8c6;">]</span>, <span style="color: #8ae234; font-weight: bold;">Complex</span><span style="color: #8c8c8c;">)</span>
+
+<span style="color: #729fcf; font-weight: bold;">data</span> <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #8c8c8c;">{</span> load <span style="color: #ff6347;">::</span> <span style="color: #8ae234; font-weight: bold;">Maybe</span> <span style="color: #8ae234; font-weight: bold;">Instruction</span>
+                   , add  <span style="color: #ff6347;">::</span> <span style="color: #8ae234; font-weight: bold;">Maybe</span> <span style="color: #8ae234; font-weight: bold;">Instruction</span>
+                   , mul  <span style="color: #ff6347;">::</span> <span style="color: #8ae234; font-weight: bold;">Maybe</span> <span style="color: #8ae234; font-weight: bold;">Instruction</span>
+                   , neg  <span style="color: #ff6347;">::</span> <span style="color: #8ae234; font-weight: bold;">Maybe</span> <span style="color: #8ae234; font-weight: bold;">Instruction</span>
+                   <span style="color: #8c8c8c;">}</span> <span style="color: #729fcf; font-weight: bold;">deriving</span> <span style="color: #8c8c8c;">(</span><span style="color: #8ae234; font-weight: bold;">Show</span><span style="color: #8c8c8c;">)</span>
+
+<span style="color: #edd400; font-weight: bold;">flattenSchedule</span> <span style="color: #ff6347;">::</span> <span style="color: #8c8c8c;">[</span><span style="color: #93a8c6;">[</span><span style="color: #8ae234; font-weight: bold;">Instruction</span><span style="color: #93a8c6;">]</span><span style="color: #8c8c8c;">]</span> <span style="color: #ff6347;">-&gt;</span> <span style="color: #8c8c8c;">[</span><span style="color: #8ae234; font-weight: bold;">Cycle</span><span style="color: #8c8c8c;">]</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #8c8c8c;">[</span>
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,                mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,            neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,                mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,            neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Just</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Add</span> 4 5 2<span style="color: #b0b1a3;">)</span>,       mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,            neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,                mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Just</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Mul</span> 0 0 4<span style="color: #b0b1a3;">)</span>,   neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,                mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Just</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Mul</span> 1 1 5<span style="color: #b0b1a3;">)</span>,   neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,                mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,            neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Just</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Add</span> 4 522 0<span style="color: #b0b1a3;">)</span>,     mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,            neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Just</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Add</span> 4 523 1<span style="color: #b0b1a3;">)</span>,     mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,            neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Just</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Load</span> 0 4<span style="color: #b0b1a3;">)</span>,  add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,                mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,            neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,                mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,            neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Just</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Add</span> 525 20 523<span style="color: #b0b1a3;">)</span>,  mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,            neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Just</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Add</span> 524 19 522<span style="color: #b0b1a3;">)</span>,  mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,            neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Just</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Load</span> 2 20<span style="color: #b0b1a3;">)</span>, add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,                mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,            neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Just</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Load</span> 1 19<span style="color: #b0b1a3;">)</span>, add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,                mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,            neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Just</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Add</span> 785 784 525<span style="color: #b0b1a3;">)</span>, mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,            neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,                mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Just</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Mul</span> 1 0 785<span style="color: #b0b1a3;">)</span>, neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,                mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Just</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Mul</span> 0 1 784<span style="color: #b0b1a3;">)</span>, neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Just</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Add</span> 274 782 524<span style="color: #b0b1a3;">)</span>, mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,            neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,                mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,            neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Just</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Neg</span> 783 274<span style="color: #b0b1a3;">)</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,                mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Just</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Mul</span> 1 1 783<span style="color: #b0b1a3;">)</span>, neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>,
+  <span style="color: #8ae234; font-weight: bold;">Cycle</span> <span style="color: #93a8c6;">{</span>load <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,          add <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span>,                mul <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Just</span> <span style="color: #b0b1a3;">(</span><span style="color: #8ae234; font-weight: bold;">Mul</span> 0 0 782<span style="color: #b0b1a3;">)</span>, neg <span style="color: #ff6347;">=</span> <span style="color: #8ae234; font-weight: bold;">Nothing</span><span style="color: #93a8c6;">}</span>
+<span style="color: #8c8c8c;">]</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6bc49f6" class="outline-4">
+<h4 id="org6bc49f6"><span class="section-number-4">3.1.3</span> Assembler</h4>
+<div class="outline-text-4" id="text-3-1-3">
+<div class="org-src-container">
+<pre class="src src-haskell"><span style="color: #edd400; font-weight: bold;">encodeLoad</span> <span style="color: #ff6347;">::</span> <span style="color: #8ae234; font-weight: bold;">Maybe</span> <span style="color: #8ae234; font-weight: bold;">IR.Instruction</span> <span style="color: #ff6347;">-&gt;</span> <span style="color: #8ae234; font-weight: bold;">BV.BV</span>
+<span style="color: #edd400; font-weight: bold;">assemble</span> <span style="color: #ff6347;">::</span> <span style="color: #8c8c8c;">[</span><span style="color: #8ae234; font-weight: bold;">IR.Cycle</span><span style="color: #8c8c8c;">]</span> <span style="color: #ff6347;">-&gt;</span> <span style="color: #8c8c8c;">[</span><span style="color: #8ae234; font-weight: bold;">Word128</span><span style="color: #8c8c8c;">]</span>
+</pre>
+</div>
+
+<p>
+Reversed and assembled:
+</p>
+<pre class="example">
+[
+  1073742606,
+  1074792207,
+  8534579836514498005434368,
+  2924556919630725120,
+  1073743632,
+  1074791185,
+  4075231024617881600,
+  1329228005872192911768272894028677120,
+  1329228015785384632608232126619320320,
+  3485829014013083648,
+  3488083014997508096,
+  0,
+  1329227995823601499131475193870942208,
+  2316000299778572288,
+  2315998098607833088,
+  0,
+  1074791429,
+  1073741828,
+  2314861207879680000,
+  0,
+  0
+]
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1244ae1" class="outline-3">
+<h3 id="org1244ae1"><span class="section-number-3">3.2</span> VLIW Processor</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+The VLIW processor, as indicated in <a href="#org64fbe3c">Compiler</a>, has Load, Neg, Add,
+and Mul pipes. It additionally has a register file and all the logic required to marshal data to and from registers/pipes as needed.
+</p>
+
+<p>
+The processor has a floating point register file where the first three registers
+(indexes 0-2) are special-purpose and the remainder are general
+purpose. Registers 0 and 1 are designated to hold the real and imaginary
+components of \(Z\) respectively. Thus, the compiled program can count on the
+result of the previous iteration being there and is responsible for storing the
+result of its computation there as well. In the next section I describe how
+\(Z_0\) is loaded into those registers. Register 2 is special-purposed to throw an
+interrupt when a value larger than <code>max_magnitude</code> is written to it. The last
+thing the compiled programs do is calculate the squared magnitude of \(Z_n\) and
+write it to register 2; if the magnitude has escaped the threshold then the
+processor sets its <code>done</code> flag high (the VLIW processor takes no further action,
+but the Row Solver's response is described next).
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0077a5b" class="outline-3">
+<h3 id="org0077a5b"><span class="section-number-3">3.3</span> Row Solver</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+The Row Solver has two (TODO) states: a <code>reset/init</code> state and <code>compute</code> state. An
+interesting note is that the pixel solver is restarted within the same cycle as
+it finishes if the row solver hasn't reached the end of the row yet, saving
+hundreds of cycles per row. Otherwise, this is a pretty trivial implementation.
+</p>
+
+<p>
+Note that the signals that start with <code>solver_</code> reference the pixel
+solver's signals, not the row solver's. 
+</p>
+
+<div class="org-src-container">
+<pre class="src src-verilog"><span style="color: #8ae234; font-weight: bold;">parameter</span> state_reset=0, state_compute=1;
+<span style="color: #729fcf; font-weight: bold;">always</span> <span style="color: #8ae234; font-weight: bold;">@</span><span style="color: #8c8c8c;">(</span><span style="color: #729fcf; font-weight: bold;">posedge</span> solver_clk<span style="color: #8c8c8c;">)</span> <span style="color: #8ae234; font-weight: bold;">begin</span>
+   <span style="color: #729fcf; font-weight: bold;">if</span><span style="color: #8c8c8c;">(</span>reset || state == state_reset<span style="color: #8c8c8c;">)</span> <span style="color: #8ae234; font-weight: bold;">begin</span>
+      state &lt;= state_reset;
+      start_request &lt;= 1;
+      <span style="color: #729fcf; font-weight: bold;">if</span> <span style="color: #8c8c8c;">(</span>start_grant<span style="color: #8c8c8c;">)</span> <span style="color: #8ae234; font-weight: bold;">begin</span>
+         state &lt;= state_compute;
+         start_request &lt;= 0;
+         output_row_idx &lt;= row_y_idx;
+         <span style="color: #888a85;">// </span><span style="color: #888a85;">start the simulation of the first element of the row</span>
+         solver_C_A_reference &lt;= row_x_reference;
+         solver_C_A_step      &lt;= row_x_step;
+         column_idx           &lt;= 0;
+         solver_C_B           &lt;= row_y;
+         solver_start         &lt;= 1;
+      <span style="color: #8ae234; font-weight: bold;">end</span>
+   <span style="color: #8ae234; font-weight: bold;">end</span>
+   <span style="color: #729fcf; font-weight: bold;">else</span> <span style="color: #729fcf; font-weight: bold;">if</span> <span style="color: #8c8c8c;">(</span>state == state_compute<span style="color: #8c8c8c;">)</span> <span style="color: #8ae234; font-weight: bold;">begin</span>
+      <span style="color: #729fcf; font-weight: bold;">if</span> <span style="color: #8c8c8c;">(</span>solver_start<span style="color: #8c8c8c;">)</span> solver_start &lt;= 0; <span style="color: #888a85;">// </span><span style="color: #888a85;">only needs to be hi once</span>
+      <span style="color: #729fcf; font-weight: bold;">if</span> <span style="color: #8c8c8c;">(</span>solver_done<span style="color: #8c8c8c;">)</span> <span style="color: #8ae234; font-weight: bold;">begin</span>
+         <span style="color: #888a85;">// </span><span style="color: #888a85;">receive results</span>
+         <span style="color: #888a85;">// </span><span style="color: #888a85;">start on new results</span>
+         <span style="color: #729fcf; font-weight: bold;">if</span> <span style="color: #8c8c8c;">(</span>column_idx == 639<span style="color: #8c8c8c;">)</span> <span style="color: #8ae234; font-weight: bold;">begin</span> <span style="color: #888a85;">// </span><span style="color: #888a85;">just finished last column</span>
+            state &lt;= state_reset;
+         <span style="color: #8ae234; font-weight: bold;">end</span>
+         <span style="color: #729fcf; font-weight: bold;">else</span> <span style="color: #8ae234; font-weight: bold;">begin</span>
+            column_idx   &lt;= column_idx + 1;
+            solver_start &lt;= 1;
+         <span style="color: #8ae234; font-weight: bold;">end</span>
+      <span style="color: #8ae234; font-weight: bold;">end</span>
+   <span style="color: #8ae234; font-weight: bold;">end</span>
+<span style="color: #8ae234; font-weight: bold;">end</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org75721c1" class="outline-3">
+<h3 id="org75721c1"><span class="section-number-3">3.4</span> Frame Solver</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+The frame solver consists of two main components: the arbiters getting data
+to/from the row sovlers and a generate loop which instantiates the row
+solvers/their FIFOs.
+</p>
+
+<p>
+A minimal state machine generates a new imaginary number corresponding to a row
+that needs to be computed every time a row solver receives a grant:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-verilog"><span style="color: #729fcf; font-weight: bold;">always</span> <span style="color: #8ae234; font-weight: bold;">@</span><span style="color: #8c8c8c;">(</span><span style="color: #729fcf; font-weight: bold;">posedge</span> solver_clk<span style="color: #8c8c8c;">)</span> <span style="color: #8ae234; font-weight: bold;">begin</span>
+   frame_done_stb &lt;= 0; <span style="color: #888a85;">// </span><span style="color: #888a85;">default value</span>
+   <span style="color: #729fcf; font-weight: bold;">if</span> <span style="color: #8c8c8c;">(</span>reset<span style="color: #8c8c8c;">)</span> <span style="color: #8ae234; font-weight: bold;">begin</span>
+      row_next_y_idx &lt;= 0;
+      row_next_y_value &lt;= y_0;
+   <span style="color: #8ae234; font-weight: bold;">end</span>
+   <span style="color: #729fcf; font-weight: bold;">else</span> <span style="color: #729fcf; font-weight: bold;">if</span> <span style="color: #8c8c8c;">(</span>row_next_y_idx == 479<span style="color: #8c8c8c;">)</span> <span style="color: #8ae234; font-weight: bold;">begin</span>
+      <span style="color: #888a85;">// </span><span style="color: #888a85;">frame is done</span>
+      row_next_y_idx &lt;= 0;
+      frame_done_stb &lt;= 1;
+      <span style="color: #888a85;">// </span><span style="color: #888a85;">reset things</span>
+      row_next_y_idx &lt;= 0;
+      row_next_y_value &lt;= y_0;
+   <span style="color: #8ae234; font-weight: bold;">end</span>
+   <span style="color: #729fcf; font-weight: bold;">else</span> <span style="color: #729fcf; font-weight: bold;">if</span> <span style="color: #8c8c8c;">(</span>row_solver_start_grant &gt; 0<span style="color: #8c8c8c;">)</span> <span style="color: #8ae234; font-weight: bold;">begin</span>
+      row_next_y_idx &lt;= row_next_y_idx + 1;
+      row_next_y_value &lt;= row_next_y_value_adder_out;
+   <span style="color: #8ae234; font-weight: bold;">end</span>
+<span style="color: #8ae234; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<p>
+That <code>row_next_y_value</code> is wired to all of the row solvers, but the
+start grant signal (a one-hot signal) means that at most a single row solver
+will latch that <code>row_next_y_value</code> on any cycle. That grant signal is
+given to the row solver with smallest index AND whose start request signal is
+high. The signal is generated by the <code>Reqs_To_One_Hot</code> module.
+</p>
+
+<p>
+That same <code>Reqs_To_One_Hot</code> module is instantiated a second time to
+arbitrate which row solver gets to return a value in a given cycle. The
+arbiter's input is a wire with each bit set by the inverse of a FIFO's
+<code>empty</code> signal; that is, when a FIFO is not empty it is making a request
+to the arbiter. When the arbiter gives that FIFO a grant the FIFO's output is
+muxed to the frame solver's outputs and the FIFO receives a <code>rdreq</code>
+signaling that it should advance its output.
+</p>
+
+<p>
+The generator for loop instantiates the row solvers and FIFOs. The size of all
+the connections and the loop are all parameterized by
+<code>NUM_ROWS_SOLVERS</code>.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf298705" class="outline-2">
+<h2 id="orgf298705"><span class="section-number-2">4</span> Results of the design:</h2>
+</div>
+
+<div id="outline-container-orgd9bfdf4" class="outline-2">
+<h2 id="orgd9bfdf4"><span class="section-number-2">5</span> Conclusions:</h2>
+</div>
+
+<div id="outline-container-orgbfece45" class="outline-2">
+<h2 id="orgbfece45"><span class="section-number-2">6</span> Appndix A</h2>
+<div class="outline-text-2" id="text-6">
+<ul class="org-ul">
+<li>The group approves this report for inclusion on the course website.</li>
+<li>The group approves the video for inclusion on the course youtube channel.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org90b7906" class="outline-2">
+<h2 id="org90b7906"><span class="section-number-2">7</span> Appendix with commented Verilog and/or program listings. When posting code, you must comply with all Altera IP considerations.</h2>
+</div>
+<div id="outline-container-org1fcd7f1" class="outline-2">
+<h2 id="org1fcd7f1"><span class="section-number-2">8</span> Appendix with schematics if you build hardware external to the DE2 board (you can download free software from expresspcb.com to draw schematics).</h2>
+</div>
+<div id="outline-container-org19429b8" class="outline-2">
+<h2 id="org19429b8"><span class="section-number-2">9</span> Appendix with a list of the specific tasks in the project carried out by each team member.</h2>
+</div>
+<div id="outline-container-orgfb12364" class="outline-2">
+<h2 id="orgfb12364"><span class="section-number-2">10</span> References you used:</h2>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Istvan P. Burbank</p>
+<p class="date">Created: 2017-05-16 Tue 05:36</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
